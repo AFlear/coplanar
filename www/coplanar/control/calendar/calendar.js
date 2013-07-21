@@ -7,6 +7,7 @@ function(Control, can, jQuery) {
             model: null,
             eventsView: 'edit',
             calendarOptions: {},
+            defaultCalendarView: 'month',
         },
 
         weekToDate: function(year, wn, dayNb){
@@ -22,20 +23,33 @@ function(Control, can, jQuery) {
             this._super.apply(this, arguments);
             this._eventsFetched = undefined;
             this._events = [];
+            var inited = false;
             this.element.fullCalendar(can.extend({
                 viewDisplay: function(view) {
-                    if (view.name === 'month') {
-                        if (can.route.attr('month') == null ||
-                            can.route.attr('year') == null)
-                            can.route.replace({
-                                year: jQuery.datepicker.formatDate('yy', view.start),
-                                month: jQuery.datepicker.formatDate('mm', view.start),
-                            }, true);
-                        else
-                            can.route.redirect({
-                                year: jQuery.datepicker.formatDate('yy', view.start),
-                                month: jQuery.datepicker.formatDate('mm', view.start),
-                            }, true);
+                    // We don't want to alter the initial view
+                    if (inited === false) {
+                        inited = true;
+                        return;
+                    }
+                    if (can.route.attr('calendarView') === 'month') {
+                        can.route.redirect({
+                            year: jQuery.datepicker.formatDate('yy', view.start),
+                            month: jQuery.datepicker.formatDate('mm', view.start),
+                        }, true);
+                    } else if (can.route.attr('calendarView') === 'week') {
+                        var week = jQuery.fullCalendar.formatDate(view.start, 'W');
+                        can.route.redirect({
+                            // On week 1 we must use the end date for the year.
+                            year: jQuery.datepicker.formatDate(
+                                'yy', parseInt(week) > 1 ? view.start : view.end),
+                            week: week,
+                        }, true);
+                    } else if (can.route.attr('calendarView') === 'day') {
+                        can.route.redirect({
+                            year: jQuery.datepicker.formatDate('yy', view.start),
+                            month: jQuery.datepicker.formatDate('mm', view.start),
+                            day: jQuery.datepicker.formatDate('dd', view.start),
+                        }, true);
                     }
                 },
                 events: this._events,
@@ -111,19 +125,46 @@ function(Control, can, jQuery) {
             } else
                 def = can.when();
 
-            var view = this.element.fullCalendar('getView');
-            var today = new Date();
-            var year, month, update = false;
+            def.done(function () {
+                // Normalize the view name
+                var calendarView = route.calendarView || self.options.defaultCalendarView;
+                if (calendarView !== 'month' &&
+                    calendarView !== 'week' &&
+                    calendarView !== 'day')
+                    calendarView = 'month';
 
-            year = route.year ? parseInt(route.year) : today.getFullYear();
-            update = (update || !view.start || year != view.start.getFullYear());
+                // Map to fullcalendar names
+                var fcView;
+                if (calendarView === 'week')
+                    fcView = 'basicWeek';
+                else if (calendarView === 'day')
+                    fcView = 'basicDay';
+                else
+                    fcView = 'month';
 
-            month = route.month ? parseInt(route.month)-1 : today.getMonth();
-            update = (update || !view.start || month != view.start.getMonth());
+                // Change the view if needed
+                if (self.element.fullCalendar('getView').name !== fcView) {
+                    console.log('Change view');
+                    self.element.fullCalendar('changeView', fcView);
+                }
 
-            if (update)
-                def.done(can.proxy(this.element.fullCalendar, this.element,
-                                   'gotoDate', year, month));
+                // Set the date
+                var date, today = new Date();
+                var year = route.year ? parseInt(route.year) : today.getFullYear();
+                if (calendarView === 'week') {
+                    date = route.week ?
+                        Calendar.weekToDate(year, parseInt(route.week), 1) :
+                        today;
+                } else {
+                    var month = route.month ? parseInt(route.month)-1 : today.getMonth();
+                    var day = route.day ? parseInt(route.day) : today.getDate();
+                    date = new Date(year, month, day);
+                }
+
+                console.log('Goto date:', date);
+                self.element.fullCalendar('gotoDate', date)
+            });
+
             return def;
         }
     });
