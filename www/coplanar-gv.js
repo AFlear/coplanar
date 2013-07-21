@@ -245,7 +245,7 @@ function (jQuery, can, coplanar) {
                     center: 'title',
                     right:  'today prev next'
                 },
-                firstDay: 3,
+                firstDay: 1,
                 allDayDefault: true,
                 editable: false,
                 timeFormat: 'HH:mm',
@@ -303,6 +303,22 @@ function (jQuery, can, coplanar) {
         },
     };
 
+    var calendarRoutes = {
+        '': { calendarView: 'month' },
+        '/': { calendarView: 'month' },
+
+        '/:year': { calendarView: 'month' },
+        '/:year/': { calendarView: 'month' },
+
+        '/:year/week': { calendarView: 'week' },
+        '/:year/week/': { calendarView: 'week' },
+        '/:year/week/:week': { calendarView: 'week' },
+
+        '/:year/:month': { calendarView: 'month' },
+        '/:year/:month/': { calendarView: 'month' },
+        '/:year/:month/:day': { calendarView: 'day' },
+    };
+
     var CoplanarGV = coplanar.App.extend({
         defaults: {
             template: 'ui/coplanar-gv.ejs',
@@ -328,10 +344,7 @@ function (jQuery, can, coplanar) {
                     views: {
                         'calendar': {
                             constructor: EventCalendar,
-                            routes: {
-                                '/:year/:month': null,
-                                '/:year': null,
-                            },
+                            routes: calendarRoutes,
                         },
                         'edit': {
                             constructor: EventEditor,
@@ -354,10 +367,7 @@ function (jQuery, can, coplanar) {
                     'views': {
                         'calendar': {
                             constructor: HostelCalendar,
-                            routes: {
-                                '/:year': null,
-                                '/:year/:month': null,
-                            },
+                            routes: calendarRoutes,
                         },
                         'edit': {
                             constructor: HostelEditor,
