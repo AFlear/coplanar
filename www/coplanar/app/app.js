@@ -21,8 +21,17 @@ function(coplanar, can) {
             this._viewQueue = [];
             this.currentView = null;
 
+            if (this.options.defaultModel) {
+                can.route("", {
+                    model: this.options.defaultModel,
+                    view: this.options.models[this.options.defaultModel].defaultView,
+                });
+            }
+
             for (var modelName in this.options.models) {
                 var m = this.options.models[modelName];
+                if (m.defaultView !== null)
+                    can.route(modelName, { model: modelName, view: m.defaultView });
                 for (var viewName in m.views) {
                     var v = m.views[viewName];
                     var path = modelName + '/' + viewName;
