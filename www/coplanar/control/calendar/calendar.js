@@ -8,6 +8,15 @@ function(Control, can, jQuery) {
             eventsView: 'edit',
             calendarOptions: {},
         },
+
+        weekToDate: function(year, wn, dayNb){
+            if (dayNb == null)
+                dayNb = 0;
+            var j10 = new Date( year,0,10,12,0,0);
+            var j4 = new Date( year,0,4,12,0,0);
+            var mon1 = j4.getTime() - j10.getDay() * 86400000;
+            return new Date(mon1 + ((wn - 1)  * 7  + dayNb) * 86400000);
+        },
     },{
         init: function () {
             this._super.apply(this, arguments);
