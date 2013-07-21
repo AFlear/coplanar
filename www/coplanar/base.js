@@ -20,5 +20,16 @@ function(can) {
         }, 10);
     };
 
+    // This replace the route, including its history entry.
+    can.route.replace = function (route, merge) {
+        console.log('==> Replacing with', can.route.url(route, merge), JSON.stringify(route));
+        var hash = can.route.url(route, merge);
+        if (hash.substr(0,1) !== '#')
+            hash = '#' + hash;
+        setTimeout(function() {
+            window.location.replace(hash);
+        }, 10);
+    };
+
     return coplanar;
 });
