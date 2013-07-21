@@ -7,7 +7,7 @@ function(Control, can, jQuery) {
             model: null,
             eventsView: 'edit',
             calendarOptions: {},
-        }
+        },
     },{
         init: function () {
             this._super.apply(this, arguments);
@@ -16,10 +16,17 @@ function(Control, can, jQuery) {
             this.element.fullCalendar(can.extend({
                 viewDisplay: function(view) {
                     if (view.name === 'month') {
-                        can.route.redirect({
-                            year: jQuery.datepicker.formatDate('yy', view.start),
-                            month: jQuery.datepicker.formatDate('mm', view.start),
-                        }, true);
+                        if (can.route.attr('month') == null ||
+                            can.route.attr('year') == null)
+                            can.route.replace({
+                                year: jQuery.datepicker.formatDate('yy', view.start),
+                                month: jQuery.datepicker.formatDate('mm', view.start),
+                            }, true);
+                        else
+                            can.route.redirect({
+                                year: jQuery.datepicker.formatDate('yy', view.start),
+                                month: jQuery.datepicker.formatDate('mm', view.start),
+                            }, true);
                     }
                 },
                 events: this._events,

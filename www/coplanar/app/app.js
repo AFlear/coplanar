@@ -158,7 +158,7 @@ function(coplanar, can) {
             //console.log('Route changed', JSON.stringify(newRoute));
             if (newRoute.model == null) {
                 if (this.options.defaultModel != null)
-                    can.route.redirect(can.extend({model: this.options.defaultModel},newRoute));
+                    can.route.replace(can.extend({model: this.options.defaultModel}, newRoute));
                 // else 404
                 console.log('No model in route!');
                 return;
@@ -172,7 +172,7 @@ function(coplanar, can) {
 
             if (newRoute.view == null) {
                 if (model.defaultView != null)
-                    can.route.redirect(can.extend({view: model.defaultView}, newRoute));
+                    can.route.replace(can.extend({view: model.defaultView}, newRoute));
                 console.log('No view in route!');
                 // else 404
                 return;
