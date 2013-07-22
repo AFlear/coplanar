@@ -410,6 +410,7 @@ function (jQuery, can, coplanar) {
                 getViewTitle: function() {
                     return can.route.attr('model') + ' / ' + can.route.attr('view');
                 },
+                logout: can.proxy(this.logout, this),
             });
         },
 
@@ -463,6 +464,20 @@ function (jQuery, can, coplanar) {
             });
 
             return def;
+        },
+
+        logout: function () {
+            var self = this;
+            can.ajax(couchURL + '/_session', {
+                type: 'DELETE',
+                dataType: 'json',
+                xhrFields: {
+                    withCredentials: true,
+                },
+            })
+                .done(function(data) {
+                    self.session.attr('username', '');
+                });
         },
     });
 

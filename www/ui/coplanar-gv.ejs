@@ -17,7 +17,7 @@
        <%= (el) -> el.menu() %>
       >
       <li><a href="<%= url({ model: 'user', view: 'edit', id: data.attr('username')}, true) %>">Edit</a></li>
-      <li><a href="javascript:;">Logout</a></li>
+      <li><a href="javascript:;" <%= (el) -> el.click(logout) %>>Logout</a></li>
     </ul>
     </span>
   </span>
