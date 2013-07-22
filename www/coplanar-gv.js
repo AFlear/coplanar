@@ -387,6 +387,23 @@ function (jQuery, can, coplanar) {
             },
         },
     },{
+        init: function() {
+            var self = this;
+            this._super.apply(this, arguments);
+            // Get the current session
+            can.ajax(couchURL + '/_session', {
+                type: 'GET',
+                dataType: 'json',
+                xhrFields: {
+                    withCredentials: true,
+                },
+            })
+                .done(function(data) {
+                    if (data.userCtx.name != null)
+                        self.session.attr('username', data.userCtx.name);
+                });
+        },
+
         newEnv: function() {
             var self = this;
             return can.extend(this._super(), {
