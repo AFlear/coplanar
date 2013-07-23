@@ -211,6 +211,12 @@ function (jQuery, can, coplanar) {
             },
         },
     },{
+        getObjectTitle: function(hostel, idx) {
+            return hostel.attr('start') + ' - ' +
+                hostel.attr('personCount') + ' ' +
+                (hostel.attr('personCount') > 0 ? 'persons' : 'person');
+        },
+
         getAddTitle: function() {
             return 'Add hostel reservation';
         },
