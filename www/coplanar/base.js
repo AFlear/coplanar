@@ -7,6 +7,12 @@ function(can) {
     if (steal.dev)
         window._coplanar = coplanar;
 
+    // Make sure we can call a console.log() function
+    if (window.console == null)
+        window.console = {};
+    if (window.console.log == null)
+        window.console.log = function () {};
+
     // Redirect the browser to another route.
     // This function allow to set the whole route 'at once'.
     // This is in contrast to using can.route.attr() that
