@@ -1,0 +1,20 @@
+[submodule "steal"]
+	path = lib/steal
+	url = git://github.com/bitovi/steal.git
+	branch = master
+[submodule "canjs"]
+	path = lib/canjs
+	url = ../canjs.git
+	branch = master
+[submodule "jquery"]
+	path = lib/jquery
+	url = git://github.com/jquery/jquery.git
+	branch = 1.9-stable
+[submodule "jquery-ui"]
+	path = lib/jquery-ui
+	url = git://github.com/jquery/jquery-ui.git
+	branch = 1-10-stable
+[submodule "fullcalendar"]
+	path = lib/fullcalendar
+	url = git://github.com/arshaw/fullcalendar.git
+	branch = master
