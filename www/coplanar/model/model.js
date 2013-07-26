@@ -26,6 +26,10 @@ function(coplanar, can) {
             }
         },
 
+        getObjectContext: function() {
+            return this.modelTypes;
+        },
+
         // Return a default object for the controls. We don't override model()
         // because it must still be possible to construct empty objects for
         // the model to work properly.
