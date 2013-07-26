@@ -1,11 +1,9 @@
-steal('jquery', 'can', 'coplanar',
+steal('jquery', 'can', 'coplanar', './coplanar-gv-config.js',
       'coplanar/model/couchdb',
       'coplanar/control/modeleditor',
       'coplanar/control/listeditor',
       'coplanar/control/calendar',
-function (jQuery, can, coplanar) {
-
-    var couchURL = 'http://localhost:5984';
+function (jQuery, can, coplanar, config) {
 
     /*
      * Data models
@@ -24,9 +22,9 @@ function (jQuery, can, coplanar) {
     // have a 'docType' field and we have a view to get all documents
     // from a given type.
     var GVModel = coplanar.Model.CouchDB.extend({
-        baseURL: couchURL,
-        dbName: 'gv',
-        designDoc: 'coplanar',
+        baseURL: config.baseURL,
+        dbName: config.dbName || 'gv',
+        designDoc: config.designDoc || 'coplanar',
         docType: null,
 
         getDefaultObject: function (data) {
@@ -397,7 +395,7 @@ function (jQuery, can, coplanar) {
             var self = this;
             this._super.apply(this, arguments);
             // Get the current session
-            can.ajax(couchURL + '/_session', {
+            can.ajax(config.baseURL + '/_session', {
                 type: 'GET',
                 dataType: 'json',
                 xhrFields: {
@@ -428,7 +426,7 @@ function (jQuery, can, coplanar) {
         },
 
         login: function(credentials) {
-            return can.ajax(couchURL + '/_session', {
+            return can.ajax(config.baseURL + '/_session', {
                 dataType: 'json',
                 type: 'POST',
                 contentType: 'application/json; charset=UTF-8',
@@ -474,7 +472,7 @@ function (jQuery, can, coplanar) {
 
         logout: function () {
             var self = this;
-            can.ajax(couchURL + '/_session', {
+            can.ajax(config.baseURL + '/_session', {
                 type: 'DELETE',
                 dataType: 'json',
                 xhrFields: {

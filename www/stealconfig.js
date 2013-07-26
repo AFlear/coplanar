@@ -15,6 +15,9 @@ steal.config({
             exports: "jQuery.fullcalendar",
             packaged: false,
         },
+        'coplanar-gv-config.js': {
+            packaged: false,
+        },
     },
     paths: {
         'jquery/jquery.js': 'jquery/jquery.min.js',
