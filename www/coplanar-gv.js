@@ -95,6 +95,7 @@ function (jQuery, can, coplanar, config) {
     });
 
     var EventProgram = coplanar.Model({
+        modelName: 'EventProgram',
         init: function() {
             this._super.apply(this, arguments);
             this.validatePresenceOf("start");
@@ -107,6 +108,7 @@ function (jQuery, can, coplanar, config) {
         docType: 'Event',
         attributes: {
             'hostel': 'refList:Hostel',
+            'program': 'EventProgram.models',
         },
         init: function() {
             this._super.apply(this, arguments);
