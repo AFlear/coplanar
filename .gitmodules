@@ -1,7 +1,7 @@
 [submodule "steal"]
 	path = lib/steal
-	url = git://github.com/bitovi/steal.git
-	branch = master
+	url = ../steal.git
+	branch = coplanar/master
 [submodule "canjs"]
 	path = lib/canjs
 	url = ../canjs.git
