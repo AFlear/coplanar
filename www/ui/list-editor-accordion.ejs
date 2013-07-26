@@ -1,0 +1,34 @@
+<div>
+  <% can.each(data, function(obj, idx) { %>
+  <h3>
+    <%= getObjectTitle(obj, idx) %>
+    <a href="javascript:;" class="accordion-delete-button" title="Delete"
+       <%# We must use 'root' for the refresh because 'el' get removed from the DOM  %>
+       <%= (el) -> el.tooltip() %>
+       <%= (el) -> objectDelButton(el, obj, idx) %>
+       <%= (el) -> el.click(function(evt) { root.children().accordion('refresh'); }) %>
+       <%= (el) -> el.click(function(evt) { evt.stopPropagation();  }) %>
+       ><span class="ui-icon ui-icon-circle-close">X</span>
+    </a>
+  </h3>
+  <div>
+     <div
+        <%= (el) -> makeObjectEditor(el, obj, idx) %>
+       >
+     </div>
+  </div>
+  <% }) %>
+  <h3><%= getAddTitle() %></h3>
+  <%# We init the accordion here because otherwise it get confused by
+      the unexpended .each() above %>
+  <div <%= (el) -> el.parent().accordion({heightStyle: "content"})  %> >
+    <div
+       <%= (el) -> makeObjectCreator(el)  %>
+      >
+    </div>
+    <button
+       <%= (el) -> objectAddButton(el.button()) %>
+       <%= (el) -> el.click(function() { root.children().accordion('refresh'); }) %>
+       >Add</button>
+  </div>
+</div>

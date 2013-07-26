@@ -1,0 +1,15 @@
+<div>
+  <label>Username</label>
+  <input type="text"
+         <%= (el) -> bindValue(el, 'name') %>
+  />
+</div>
+<div>
+  <label>Password</label>
+  <input type="password"
+         <%= (el) -> bindValue(el, 'password') %>
+  />
+</div>
+<div>
+  <%= data.attr('statusMsg') %>
+</div>

@@ -1,0 +1,101 @@
+<div <%= (el) -> el.tabs() %>>
+  <ul>
+    <li><a href="<%= url({tab: ''}) %>">Event</a></li>
+    <li><a href="<%= url({tab: 'program'}) %>">Program</a></li>
+    <li><a href="<%= url({tab: 'contacts'}) %>">Contacts</a></li>
+    <li><a href="<%= url({tab: 'hostel'}) %>">Hostel</a></li>
+    <!--li><a href="<%= url({tab: 'kitchen'}) %>">Food</a></li>
+    <li><a href="<%= url({tab: 'shifts'}) %>">Shifts</a></li-->
+  </ul>
+  <div id="<%= anchor({tab: ''}) %>">
+    <div>
+      <div class="field-name">Status</div>
+      <select class="field-value"
+              <%= (el) -> bindValue(el, 'state') %>>
+        <option value="unconfirmed">Unconfirmed</option><!-- Unbestätigt -->
+        <option value="confirmed">Confirmed</option>    <!-- Bestätigt -->
+        <option value="canceled">Canceled</option>      <!-- Annulliert -->
+      </select>
+    </div>
+    <div>
+      <div class="field-name">Type</div>
+      <select class="field-value"
+              <%= (el) -> bindValue(el, 'eventType') %>>
+        <option value="Concert">Concert</option>
+        <option value="Party">Party</option>
+        <option value="Movie">Movie</option>
+      </select>
+    </div>
+    <div>
+      <div class="field-name">Title</div>
+      <input class="field-value" value="Title..."
+             <%= (el) -> bindValue(el, 'title') %> />
+    </div>
+    <div>
+      <div class="field-name">Date</div>
+      <div>
+        <input class="scalar-field-value"
+               <%= (el) -> bindValue(datePicker(el), 'start') %>/>
+        <span class="scalar-field-editor" style="<%= this['end'] ? '' : 'display: none;' %>">
+          to
+          <input class="field-value"
+                 <%= (el) -> bindValue(datePicker(el), 'end') %>/>
+        </span>
+      </div>
+      <div>
+        <input class="field-value" type="checkbox" name="_withEnd">
+          Last more than one day
+        </input>
+      </div>
+    </div>
+    <div>
+      <div class="field-name">Location</div>
+      <select class="field-value"
+              <%= (el) -> bindValue(el, 'location') %>>
+        <option value="">Select one…</option>
+        <option value="Druckerei">Druckerei</option>
+        <option value="Fabrik Links">Fabrik Links</option>
+        <option value="Fabrik Rechts">Fabrik Rechts</option>
+        <option value="Jupi">Jupi</option>
+      </select>
+    </div>
+  </div>
+  <div id="<%= anchor({tab: 'program'}) %>"
+       <%= (el) -> eventProgramListEditor(el, { object: data.attr('program') }) %>
+    >
+  </div>
+  <div id="<%= anchor({tab: 'contacts'}) %>">
+    <% if (data.attr('contacts') == null) data.attr('contacts', {}) %>
+    <div>
+      <div class="field-name">Organizer</div>
+      <textarea class="field-value"
+                <%= (el) -> bindValue(el, 'contacts.organizer') %>/>
+    </div>
+    <div>
+      <div class="field-name">Artist</div>
+      <textarea class="field-value"
+                <%= (el) -> bindValue(el, 'contacts.artist') %>/>
+    </div>
+    <div>
+      <div class="field-name">Executor</div>
+      <textarea class="field-value"
+                <%= (el) -> bindValue(el, 'contacts.executor') %>/>
+    </div>
+    <div>
+      <div class="field-name">Sound Engineer</div>
+      <textarea class="field-value"
+                <%= (el) -> bindValue(el, 'contacts.sound_engineer') %>/>
+    </div>
+  </div>
+  <div id="<%= anchor({tab: 'hostel'}) %>"
+       <%= (el) -> eventHostelListEditor(el, { object: data.attr('hostel'), defaultObject: { start: data.attr('start') } }) %>
+       >
+  </div>
+  <!--div id="<%= anchor({tab: 'kitchen'}) %>">
+    <div>List of: Number of ppl / When / Food prefs </div>
+  </div>
+  <div id="<%= anchor({tab: 'shifts'}) %>">
+    <div>List of: Shift type / Location / Start / End / Number of ppl</div>
+    <div>Shift type: bar, door, etc</div>
+  </div-->
+</div>

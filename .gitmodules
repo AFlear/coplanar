@@ -5,7 +5,7 @@
 [submodule "canjs"]
 	path = lib/canjs
 	url = ../canjs.git
-	branch = master
+	branch = coplanar/master
 [submodule "jquery"]
 	path = lib/jquery
 	url = git://github.com/jquery/jquery.git

@@ -1,0 +1,31 @@
+<div>
+  <div class="field-name">Type</div>
+  <select class="field-value"
+          <%= (el) -> bindValue(el, 'showType') %>>
+    <option value="">Select one…</option>
+    <option>Band</option>
+    <option>DJ</option>
+    <option>Live Act</option>
+    <option>Reading</option>
+  </select>
+</div>
+<div>
+  <div class="field-name">Title</div>
+  <input class="field-value"
+         <%= (el) -> bindValue(el, 'title') %> />
+</div>
+<div>
+  <div class="field-name">Start</div>
+  <input class="field-value"
+         <%= (el) -> bindValue(el, 'start') %> />
+</div>
+<div>
+  <div class="field-name">Duration</div>
+  <input class="field-value"
+         <%= (el) -> bindValue(el, 'duration') %> />
+</div>
+<div>
+  <div class="field-name">Description</div>
+  <textarea class="field-value"
+            <%= (el) -> bindValue(el, 'description') %> ></textarea>
+</div>

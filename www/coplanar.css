@@ -1,0 +1,172 @@
+/** Widget stuff **/
+
+.ui-dialog-no-close .ui-dialog-titlebar-close {
+    display: none;
+}
+
+/** The page with only the app in "fullscreen" **/
+
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+.coplanar-app {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+/** Navigation **/
+.coplanar-header {
+    position: absolute;
+    width: 100%;
+    top: 0px;
+    height: 2.5em;
+    line-height: 2.5em;
+    margin: 0em;
+    padding: 0em;
+    z-index: 90;
+}
+
+.coplanar-navbar, .coplanar-navbar-menu {
+    list-style: none;
+    margin: 0px 0px;
+    padding: 0px 0px;
+    white-space: nowrap;
+}
+
+.coplanar-toplevel-menu {
+    display: inline-block;
+    position: relative;
+}
+
+.coplanar-toplevel-menu:first-child {
+     margin-left: 0.5ex;
+}
+
+.coplanar-toplevel-menu:last-child {
+     margin-right: 0.5ex;
+}
+
+.coplanar-toplevel-menu > ul {
+    display: none;
+    position: absolute;
+    min-width: 100%;
+}
+
+.coplanar-toplevel-menu:hover > ul {
+    display: block;
+}
+
+.coplanar-navbar > li {
+    display: inline-block;
+    position: relative;
+}
+
+.coplanar-navbar-menu {
+    display: none;
+    z-index: 95;
+}
+
+li:hover > .coplanar-navbar-menu {
+    display: block;
+}
+
+.coplanar-user {
+    display: inline-block;
+    position: absolute;
+    right: 0.5ex;
+}
+
+.coplanar-user > ul {
+    right: 0px;
+}
+
+/** main view **/
+.coplanar-view {
+    position: absolute;
+    /* 1.2 * 2.5 = 3em */
+    top: 3em;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    overflow: auto;
+    padding: 2mm;
+    /* To account for the borders of the navigation bar */
+    margin-top: 2px;
+}
+
+.coplanar-view > div {
+    display: inline-block;
+    width: 100%;
+}
+
+/** Calendar stuff **/
+.fc-event-status {
+    font-weight: bold;
+    float: right;
+}
+
+.fc-event-canceled .fc-event-status {
+    color: red;
+}
+
+.fc-event-canceled .fc-event-title {
+    /*text-decoration:line-through;*/
+}
+
+.fc-event-location {
+    color: black;
+ }
+
+.fc-day-actions {
+    display: none;
+    position: relative;
+    height: 100%;
+}
+
+.fc-day-actions a {
+    display: block;
+    position: absolute;
+    bottom: 0px;
+}
+
+.fc-day {
+}
+
+.fc-day:hover .fc-day-actions {
+    display: block;
+}
+
+/** Editor **/
+
+.field-name {
+    font-weight: bold;
+}
+
+.editor-field-modified {
+    background-color: yellow;
+}
+
+.accordion-delete-button {
+    float: right;
+    margin: 0;
+    padding: 0;
+    font-size: small;
+}
+
+.row > div {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 1ex 0 0;
+}
+
+.field-value-error {
+    background-color: darkred;
+}
+
+.coplanar-editor-buttons {
+    margin: 0.5em 0;
+    text-align: right;
+}

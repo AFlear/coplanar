@@ -1,0 +1,15 @@
+<div>
+  <div
+     <%= (el) -> el.append(renderData()) %>
+    ></div>
+  <div class="coplanar-editor-buttons">
+    <button>
+      <%= data.isNew() ? 'Create' : 'Save'  %>
+    </button>
+    <span
+       <%# We must init the button here to avoid a clash %>
+       <%# with the live binding %>
+       <%= (el) -> saveButton(el.prev().button()) %>
+      ></span>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="coplanar-header ui-widget ui-widget-header">
+  <span class="coplanar-toplevel-menu">
+    <a href="#!" <%= (el) -> el.button() %> >copLanar</a>
+    <ul
+       <%= (el) -> el.menu() %>
+      >
+      <li><a href="<%= url({ model: 'event',   view: 'calendar'}, true) %>">Events</a></li>
+      <li><a href="<%= url({ model: 'hostel',  view: 'calendar'}, true) %>">Hostel</a></li>
+    </ul>
+  </span>
+  <a href="<%= url({ model: can.route.attr('model'), view: 'create'}, true) %>" <%= (el) -> el.button() %> >Add</a>
+  <span><%= getViewTitle() %></span>
+
+  <span class="coplanar-user coplanar-toplevel-menu">
+    <%= data.attr('username') %>
+    <ul
+       <%= (el) -> el.menu() %>
+      >
+      <li><a href="<%= url({ model: 'user', view: 'edit', id: data.attr('username')}, true) %>">Edit</a></li>
+      <li><a href="javascript:;">Logout</a></li>
+    </ul>
+    </span>
+  </span>
+</div>
+<div class="coplanar-view"></div>

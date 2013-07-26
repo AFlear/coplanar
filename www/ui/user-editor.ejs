@@ -1,0 +1,15 @@
+<div>
+  <label>Username</label>
+  <span><%= data.attr('name') %></span>
+</div>
+<div>
+  <label>Password</label>
+  <input type="password" />
+  <input type="password" name="_password_verify"/>
+</div>
+<div>
+  <label>E-Mail</label>
+  <input
+     <%= (el) -> bindValue(el, 'email') %>
+  />
+</div>

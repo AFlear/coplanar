@@ -1,0 +1,41 @@
+<div>
+  <div class="field-name">Status</div>
+  <select class="field-value"
+          <%= (el) -> bindValue(el, 'state') %>>
+    <option value="unconfirmed">Unconfirmed</option><!-- Unbestätigt -->
+    <option value="confirmed">Confirmed</option>    <!-- Bestätigt -->
+    <option value="canceled">Canceled</option>      <!-- Annulliert -->
+  </select>
+</div>
+<div>
+  <div class="field-name">Date</div>
+  <div>
+    <input class="scalar-field-value"
+           <%= (el) -> bindValue(datePicker(el), 'start') %>/>
+    <span class="scalar-field-editor" style="<%= this['end'] ? '' : 'display: none;' %>">
+      to
+      <input class="field-value"
+             <%= (el) -> bindValue(datePicker(el), 'end') %>/>
+    </span>
+  </div>
+  <div>
+    <input class="field-value" type="checkbox" name="_withEnd">
+      Needed for more than one night
+    </input>
+  </div>
+</div>
+<div>
+  <div class="field-name">Persons</div>
+  <input class="field-value"
+         <%= (el) -> bindValue(spinner(el, {min:1, max: 20}), 'personCount', 1) %> />
+</div>
+<div>
+  <div class="field-name">Contact</div>
+  <textarea class="field-value"
+         <%= (el) -> bindValue(el, 'contact') %> />
+</div>
+<div>
+  <div class="field-name">Notes</div>
+  <textarea class="field-value"
+         <%= (el) -> bindValue(el, 'notes') %> />
+</div>
