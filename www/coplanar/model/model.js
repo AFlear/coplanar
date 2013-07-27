@@ -188,9 +188,9 @@ function(coplanar, can) {
                 if (val.length != null) {
                     for (var i = 0 ; i < val.length ; i += 1)
                         if (ifDirty !== true || val[i].isNew() || val[i].isDirty(true))
-                            savers.push(val[i].save(success, error, ifDirty));
+                            savers.push(val[i].save(null, null, ifDirty));
                 } else if (ifDirty !== true || val.isNew() || val.isDirty(true))
-                    savers.push(val.save(success, error, ifDirty));
+                    savers.push(val.save(null, null, ifDirty));
             }
 
             var def = new can.Deferred();
