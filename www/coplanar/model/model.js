@@ -127,9 +127,9 @@ function(coplanar, can) {
             return function (filter, onSuccess, onError, deref) {
                 var self = this;
                 if (deref !== undefined && deref !== true)
-                    return findAllData.call(this, filter)
-                    .then(function(objs) {
-                        return self.models(objs);
+                    return findOneData.call(this, filter)
+                    .then(function(obj) {
+                        return self.model(obj);
                     })
                     .then(onSuccess, onError);
 
