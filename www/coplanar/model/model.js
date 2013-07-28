@@ -195,7 +195,6 @@ function(coplanar, can) {
 
             var def = new can.Deferred();
             var self = this;
-            var _super = self._super;
             can.when.apply(can, savers)
                 .done(function() {
                     // FIXME: isDirty() must properly cope with references
@@ -205,7 +204,7 @@ function(coplanar, can) {
                         .fail(can.proxy(def.reject, def));
                 })
                 .fail(can.proxy(def.reject, def));
-            return (success || error) ? def.then(success, error) : def;
+            return def.then(success, error);
         },
     });
 
