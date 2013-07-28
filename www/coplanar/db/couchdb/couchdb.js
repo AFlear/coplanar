@@ -1,8 +1,7 @@
-steal('coplanar/model', 'can',
-      'can/observe/validations',
-function(Model, can) {
+steal('coplanar/db', 'can',
+function(Db, can) {
 
-    Model.CouchDB = Model.extend({
+    Db.CouchDB = Db.extend({
         id: '_id',
         baseURL: null,
         dbName: null,
@@ -13,7 +12,7 @@ function(Model, can) {
             this._super.apply(this, arguments);
         },
 
-        _ajaxReq: function(url, options) {
+        ajax: function(url, options) {
             options = can.extend(options || {}, {
                 dataType: 'json',
                 xhrFields: {
@@ -21,13 +20,47 @@ function(Model, can) {
                     withCredentials: true,
                 },
             });
-            return can.ajax(this.baseURL + '/' + this.dbName + url, options)
+            return can.ajax(this.baseURL + url, options)
                 .fail(function () {
                     console.log('AJAX error', arguments);
                 });
         },
 
-        getFindAllPath: function(params) {
+        dbAjax: function(url, options) {
+            return this.ajax('/' + this.dbName + url, options);
+        },
+
+        login: function(creds) {
+            return this.ajax(
+                '/_session', {
+                    type: 'POST',
+                    contentType: 'application/json; charset=UTF-8',
+                    data: JSON.stringify(creds),
+                })
+                .then(function(data) {
+                    return {
+                        username: data.name,
+                        roles:    data.roles,
+                    };
+                });
+        },
+
+        getUserSession: function() {
+            return this.ajax('/_session')
+                .then(function(data) {
+                    return {
+                        username: data.userCtx.name,
+                    };
+                });
+        },
+
+        logout: function() {
+            return this.ajax('/_session', {
+                type: 'DELETE',
+            });
+        },
+
+        getFindAllPath: function(model, params) {
             return '/_all_docs?include_docs=true';
         },
 
@@ -35,8 +68,8 @@ function(Model, can) {
             return id;
         },
 
-        findAll: function (params) {
-            return this._ajaxReq(this.getFindAllPath(params))
+        findAll: function (model, params) {
+            return this.dbAjax(this.getFindAllPath(model, params))
                 .then(function (data) {
                     var docs = [];
                     for (var r in data.rows)
@@ -45,14 +78,14 @@ function(Model, can) {
                 });
         },
 
-        findOne: function (params) {
-            return this._ajaxReq('/' + this.serializeId(params['id']));
+        findOne: function (model, params) {
+            return this.dbAjax('/' + this.serializeId(params['id']));
         },
 
-        create: function (params) {
+        create: function (model, params) {
             console.log('POST', JSON.stringify(params));
             //return can.when({_id: 'id' + (new Date()).getTime(), _rev: '1-234' });
-            return this._ajaxReq('', {
+            return this.dbAjax('', {
                 type: 'POST',
                 contentType: 'application/json; charset=UTF-8',
                 data: JSON.stringify(params),
@@ -64,12 +97,12 @@ function(Model, can) {
             });
         },
 
-        update: function (id, params) {
+        update: function (model, id, params) {
             console.log('PUT', id, JSON.stringify(params));
             if (!params['_rev'])
                 throw("Can't update object without a revision!");
             //return can.when({_id: params._id, _rev: '44-newrev1234'});
-            return this._ajaxReq('/' + this.serializeId(id), {
+            return this.dbAjax('/' + this.serializeId(id), {
                 type: 'PUT',
                 contentType: 'application/json; charset=UTF-8',
                 headers: {
@@ -83,17 +116,17 @@ function(Model, can) {
             });
         },
 
-        destroy: function (id) {
+        destroy: function (model, id) {
             console.log('DELETE', id, JSON.stringify(params));
             //return can.when({});
-            return this._ajaxReq('/' + this.serializeId(id), {
+            return this.dbAjax('/' + this.serializeId(id), {
                 type: 'DELETE',
             });
         },
     }, {});
 
-    can.extend(Model.CouchDB, {
-        User: Model.CouchDB({
+    can.extend(Db.CouchDB, {
+        User: Db.CouchDB.extend({
             dbName: '_users',
 
             serializeId: function (id) {
@@ -102,5 +135,5 @@ function(Model, can) {
         }, {}),
     });
 
-    return Model.CouchDB;
+    return Db.CouchDB;
 });

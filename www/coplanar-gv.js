@@ -1,9 +1,28 @@
 steal('jquery', 'can', 'coplanar', './coplanar-gv-config.js',
-      'coplanar/model/couchdb',
+      'coplanar/db/couchdb',
+      'coplanar/model/db',
       'coplanar/control/modeleditor',
       'coplanar/control/listeditor',
       'coplanar/control/calendar',
 function (jQuery, can, coplanar, config) {
+
+    /*
+     * Database
+     */
+
+    var GVDb = coplanar.Db.CouchDB.extend({
+        baseURL: config.baseURL,
+        dbName: config.dbName || 'gv',
+        designDoc: config.designDoc || 'coplanar',
+
+        getFindAllPath: function(model, params) {
+            return '/_design/' + this.designDoc + '/_view/docType' +
+                '?include_docs=true&key=' +
+                encodeURIComponent(JSON.stringify(model.docType));
+        },
+    },{
+    });
+
 
     /*
      * Data models
@@ -21,10 +40,8 @@ function (jQuery, can, coplanar, config) {
     // We use a large DB mixing various document types. Documents must
     // have a 'docType' field and we have a view to get all documents
     // from a given type.
-    var GVModel = coplanar.Model.CouchDB.extend({
-        baseURL: config.baseURL,
-        dbName: config.dbName || 'gv',
-        designDoc: config.designDoc || 'coplanar',
+    var GVModel = coplanar.Model.Db.extend({
+        db: GVDb,
         docType: null,
 
         getDefaultObject: function (data) {
@@ -37,24 +54,6 @@ function (jQuery, can, coplanar, config) {
             this.modelName = this.docType;
             this._super.apply(this, arguments);
             this.validatePresenceOf("docType");
-        },
-
-        getFindAllPath: function(params) {
-            return '/_design/' + this.designDoc + '/_view/docType' +
-                '?include_docs=true&key=' + encodeURIComponent(JSON.stringify(this.docType));
-        },
-
-        onFindOneError: function(start, end, callback, xhr) {
-            var self = this;
-            if (xhr.status == 401) {
-                console.log('Need to login to get the events');
-                this.options.app.loginDialog()
-                    .done(function() {
-                        // Restart now that we are logged in
-                        console.log('Restart getEvents', arguments);
-                        self.getEvents(start, end, callback);
-                    });
-            }
         },
     },{
     });
@@ -396,17 +395,11 @@ function (jQuery, can, coplanar, config) {
         init: function() {
             var self = this;
             this._super.apply(this, arguments);
-            // Get the current session
-            can.ajax(config.baseURL + '/_session', {
-                type: 'GET',
-                dataType: 'json',
-                xhrFields: {
-                    withCredentials: true,
-                },
-            })
+            this.db = GVDb;
+            // Get the current user session
+            this.db.getUserSession(this.session)
                 .done(function(data) {
-                    if (data.userCtx.name != null)
-                        self.session.attr('username', data.userCtx.name);
+                    self.session.attr(data);
                 });
         },
 
@@ -428,15 +421,12 @@ function (jQuery, can, coplanar, config) {
         },
 
         login: function(credentials) {
-            return can.ajax(config.baseURL + '/_session', {
-                dataType: 'json',
-                type: 'POST',
-                contentType: 'application/json; charset=UTF-8',
-                data: JSON.stringify(credentials),
-                xhrFields: {
-                    withCredentials: true,
-                },
-            });
+            var self = this;
+            return this.db.login(credentials)
+                .done(function(update) {
+                    self.session.attr(update);
+                    return self.session;
+                });
         },
 
         loginDialog: function() {
@@ -453,10 +443,8 @@ function (jQuery, can, coplanar, config) {
                         click: function(evt) {
                             var dialog = can.$(this);
                             self.login(credentials.serialize())
-                                .done(function() {
+                                .done(function(session) {
                                     console.log('Logged in as', credentials.name);
-                                    self.session.attr('username', credentials.name);
-                                    self.session.attr('password', credentials.password);
                                     dialog.dialog('close');
                                     def.resolve(credentials);
                                 })
@@ -474,13 +462,7 @@ function (jQuery, can, coplanar, config) {
 
         logout: function () {
             var self = this;
-            can.ajax(config.baseURL + '/_session', {
-                type: 'DELETE',
-                dataType: 'json',
-                xhrFields: {
-                    withCredentials: true,
-                },
-            })
+            this.db.logout(this.session)
                 .done(function(data) {
                     self.session.attr('username', '');
                 });
