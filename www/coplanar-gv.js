@@ -94,7 +94,7 @@ function (jQuery, can, coplanar, config) {
     },{
     });
 
-    var EventProgram = coplanar.Model({
+    var EventProgram = coplanar.Model.extend({
         modelName: 'EventProgram',
         init: function() {
             this._super.apply(this, arguments);
