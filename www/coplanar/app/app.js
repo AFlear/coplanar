@@ -10,7 +10,6 @@ function(coplanar, can) {
             viewEnv: null,
             template: null,
             defaultModel: null,
-            models: {},
         },
     },{
         init: function() {
@@ -24,12 +23,12 @@ function(coplanar, can) {
             if (this.options.defaultModel) {
                 can.route("", {
                     model: this.options.defaultModel,
-                    view: this.options.models[this.options.defaultModel].defaultView,
+                    view: this.pages[this.options.defaultModel].defaultView,
                 });
             }
 
-            for (var modelName in this.options.models) {
-                var m = this.options.models[modelName];
+            for (var modelName in this.pages) {
+                var m = this.pages[modelName];
                 if (m.defaultView !== null)
                     can.route(modelName, { model: modelName, view: m.defaultView });
                 for (var viewName in m.views) {
@@ -163,7 +162,7 @@ function(coplanar, can) {
                 console.log('No model in route!');
                 return;
             }
-            var model = this.options.models[newRoute.model];
+            var model = this.pages[newRoute.model];
             if (model == null) {
                 console.log('Bad model in route!');
                 // 404

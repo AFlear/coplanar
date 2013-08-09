@@ -2,15 +2,10 @@ steal('coplanar/db', 'can',
 function(Db, can) {
 
     Db.CouchDB = Db.extend({
+    },{
         id: '_id',
         baseURL: null,
         dbName: null,
-
-        init: function () {
-            if (this.baseURL && this.User && !this.User.baseURL)
-                this.User.baseURL = this.baseURL;
-            this._super.apply(this, arguments);
-        },
 
         ajax: function(url, options) {
             options = can.extend(options || {}, {
@@ -26,8 +21,23 @@ function(Db, can) {
                 });
         },
 
-        dbAjax: function(url, options) {
-            return this.ajax('/' + this.dbName + url, options);
+        dbAjax: function(url, options, def) {
+            var self = this;
+            // Add a wrapper around the DB to catch authentication error
+            // and try to login the user.
+            def = def || new can.Deferred();
+            this.ajax('/' + this.dbName + url, options)
+                .done(can.proxy(def.resolve, def))
+                .fail(function(xhr) {
+                    if (xhr.status === 401) {
+                        self.loginUser()
+                            .done(can.proxy(self.dbAjax, self, url, options, def))
+                            .fail(can.proxy(def.reject, def, xhr));
+                        return;
+                    }
+                    def.reject.apply(def, arguments);
+                });
+            return def;
         },
 
         login: function(creds) {

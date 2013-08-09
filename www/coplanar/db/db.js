@@ -4,6 +4,17 @@ function(coplanar, can) {
      * A dummy implementation of the Db interface
      */
     coplanar.Db = can.Construct.extend({
+    },{
+        /*
+         * Application API
+         */
+        setLoginHandler: function(handler) {
+            this._loginHandler = handler;
+        },
+
+        /*
+         * Subclasses must implements these
+         */
         login: function(cred) {
             return can.extend({}, cred);
         },
@@ -35,7 +46,14 @@ function(coplanar, can) {
         destroy: function (model, id) {
             return can.when({});
         },
-    },{
+
+        /*
+         * Helpers for the subclasses
+         */
+        loginUser: function() {
+            return this._loginHandler != null ?
+                this._loginHandler() : (new can.Deferred()).reject();
+        },
     });
 
     return coplanar.Db;

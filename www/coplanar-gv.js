@@ -1,26 +1,30 @@
 steal('jquery', 'can', 'coplanar', './coplanar-gv-config.js',
+      './coplanar-gv-models.js', './coplanar-gv-views.js',
       'coplanar/db/couchdb',
       'coplanar/model/db',
       'coplanar/control/modeleditor',
       'coplanar/control/listeditor',
       'coplanar/control/calendar',
-function (jQuery, can, coplanar, config) {
+function (jQuery, can, coplanar, config,
+          gvModels, gvViews) {
 
     /*
      * Database
      */
 
     var GVDb = coplanar.Db.CouchDB.extend({
-        baseURL: config.baseURL,
-        dbName: config.dbName || 'gv',
-        designDoc: config.designDoc || 'coplanar',
+    },{
+        init: function(cfg) {
+            this.baseURL   = cfg.baseURL;
+            this.dbName    = cfg.dbName || 'gv';
+            this.designDoc = cfg.designDoc || 'coplanar';
+        },
 
         getFindAllPath: function(model, params) {
             return '/_design/' + this.designDoc + '/_view/docType' +
                 '?include_docs=true&key=' +
                 encodeURIComponent(JSON.stringify(model.docType));
         },
-    },{
     });
 
 
@@ -37,276 +41,9 @@ function (jQuery, can, coplanar, config) {
     },{
     });
 
-    // We use a large DB mixing various document types. Documents must
-    // have a 'docType' field and we have a view to get all documents
-    // from a given type.
-    var GVModel = coplanar.Model.Db.extend({
-        db: GVDb,
-        docType: null,
-
-        getDefaultObject: function (data) {
-            return this._super(can.extend({
-                docType: this.docType,
-            }, data));
-        },
-
-        init: function() {
-            this.modelName = this.docType;
-            this._super.apply(this, arguments);
-            this.validatePresenceOf("docType");
-        },
-    },{
-    });
-
-    var PlannableModel = GVModel.extend({
-        init: function() {
-            this._super.apply(this, arguments);
-            this.validatePresenceOf("state");
-            this.validatePresenceOf("start");
-            //this.validatePresenceOf("title");
-        },
-        getDefaultObject: function (data) {
-            return this._super(can.extend({
-                state: 'unconfirmed',
-            }, data));
-        },
-    },{
-    });
-
-
-    var HostelModel = PlannableModel.extend({
-        docType: 'Hostel',
-
-        getDefaultObject: function (data) {
-            return this._super(can.extend({
-                state: 'unconfirmed',
-                personCount: 1,
-            }, data));
-        },
-
-        init: function() {
-            this._super.apply(this, arguments);
-            this.validatePresenceOf("start");
-            this.validatePresenceOf("personCount");
-            this.validatePresenceOf("contact");
-        },
-    },{
-    });
-
-    var EventProgram = coplanar.Model.extend({
-        modelName: 'EventProgram',
-        init: function() {
-            this._super.apply(this, arguments);
-            this.validatePresenceOf("start");
-            this.validatePresenceOf("showType");
-            this.validatePresenceOf("title");
-        },
-    },{});
-
-    var EventsModel = PlannableModel.extend({
-        docType: 'Event',
-        attributes: {
-            'hostel': 'refList:Hostel',
-            'program': 'EventProgram.models',
-        },
-        init: function() {
-            this._super.apply(this, arguments);
-            this.validatePresenceOf("eventType");
-            this.validatePresenceOf("title");
-        },
-        getDefaultObject: function (data) {
-            return this._super(can.extend({
-                hostel: [],
-                program: [],
-            }, data));
-        },
-    },{
-    });
-
-
-    /*
-     * Generic Controls
-     */
-    var GVEditor = coplanar.Control.ModelEditor.extend({
-        formatDate: function(date) {
-            return jQuery.datepicker.formatDate(this.options.datePickerOptions.dateFormat, date);
-        },
-
-        'input[name="_withEnd"] change': function(el, evt) {
-            var end = $('input[name="end"]', el.parent().parent());
-            if (el[0].checked) {
-                var start = can.$('input[name="start"]', el.parent().parent());
-                if (start[0].value != '') {
-                    var date = new Date(start[0].value);
-                    date.setDate(date.getDate()+1);
-                    end[0].value = this.formatDate(date);
-                }
-                end.parent().show();
-            } else {
-                end.val('').change();
-                end.parent().hide();
-            }
-        },
-
-        'input[name="start"] change': function(el, evt) {
-            var date = new Date(el[0].value);
-            date.setDate(date.getDate()+1);
-            can.$('input[name="end"]', el.parent())
-                .datepicker('option', 'minDate', this.formatDate(date));
-        },
-
-        newEnv: function() {
-            return can.extend(this._super(), {
-                HostelModel: function (args) {
-                    return new HostelModel(args);
-                },
-                EventProgram: function(args) {
-                    return new EventProgram(args);
-                },
-            });
-        },
-
-    });
-
-    /*
-     * User profile
-     */
-    var UserEditor = GVEditor.extend({
-        defaults: {
-            template: 'ui/user-editor.ejs',
-        },
-    },{});
-
-
-    /*
-     * Event controls
-     */
-    var EventProgramListEditor = coplanar.Control.ListEditor.extend({
-        defaults: {
-            template: 'ui/list-editor-accordion.ejs',
-            objectTemplate: 'ui/event-program-editor.ejs',
-            objectFactory: function(args) {
-                return EventProgram.getDefaultObject(args);
-            },
-        },
-    },{
-        getObjectTitle: function(prog, idx) {
-            return (prog.attr('start') ? prog.attr('start') + ' - ' : '') +
-                (prog.attr('title') || 'Show #' + (i+1)) +
-                (prog.attr('showType') ? ' (' + prog.attr('showType') + ')' : '');
-        },
-
-        getAddTitle: function() {
-            return 'Add program entry';
-        },
-    });
-
-    var EventHostelListEditor = coplanar.Control.ListEditor.extend({
-        defaults: {
-            template: 'ui/list-editor-accordion.ejs',
-            objectTemplate: 'ui/hostel-editor.ejs',
-            objectFactory: function(args) {
-                return HostelModel.getDefaultObject(args);
-            },
-        },
-    },{
-        getObjectTitle: function(hostel, idx) {
-            return hostel.attr('start') + ' - ' +
-                hostel.attr('personCount') + ' ' +
-                (hostel.attr('personCount') > 0 ? 'persons' : 'person');
-        },
-
-        getAddTitle: function() {
-            return 'Add hostel reservation';
-        },
-    });
-
-    var EventEditor = GVEditor.extend({
-        defaults: {
-            template: 'ui/event-editor.ejs',
-        },
-    },{
-        newEnv: function() {
-            var editor = this;
-            return can.extend(this._super(), {
-                eventProgramListEditor: function(el, args) {
-                    return new EventProgramListEditor(el, args);
-                },
-                eventHostelListEditor: function(el, args) {
-                    return new EventHostelListEditor(el, args);
-                },
-            });
-        },
-    });
-
-    var EventCreator = EventEditor.Creator();
-
-    var EventCalendar = coplanar.Control.Calendar.extend({
-        defaults: {
-            model: EventsModel,
-            calendarOptions: {
-                header: {
-                    left:   '',
-                    center: 'title',
-                    right:  'today prev next'
-                },
-                firstDay: 1,
-                allDayDefault: true,
-                editable: false,
-                timeFormat: 'HH:mm',
-            },
-        },
-    },{
-        eventAfterRender: function(event, element, view) {
-            var status;
-            can.$('<div>', {
-                'class': 'fc-event-location',
-                text: event.location,
-            }).prependTo(element);
-            if (event.state == 'unconfirmed')
-                status = 'TBC';
-            else if (event.state == 'canceled')
-                status = 'CANCELED';
-            if (status)
-                can.$('<span>', {
-                    text: status,
-                    'class': 'fc-event-status', // fc-event-status-' + event.state,
-                }).appendTo(can.$('.fc-event-inner', element));
-            element.addClass('fc-event-' + event.state);
-        },
-    });
-
-    var HostelCalendar = EventCalendar.extend({
-        makeCalendarEvent: function(data) {
-            var title = data.personCount > 1 ? (data.personCount + ' persons') : '1 person';
-            return can.extend({title: title}, data);
-        }
-    });
-
-    /*
-     * Hostel controls
-     */
-    var HostelEditor = GVEditor.extend({
-        defaults: {
-            template: 'ui/hostel-editor.ejs',
-            model: HostelModel,
-        },
-    },{
-    });
-
-    var HostelCreator = HostelEditor.Creator();
-
     /*
      * The coplanar application
      */
-    var viewEnv = {
-        HostelEditor: function(el, options) {
-            return new HostelEditor(el, options);
-        },
-        HostelCreator: function(el, options) {
-            return new HostelCreator(el, options);
-        },
-    };
 
     var calendarRoutes = {
         '': { calendarView: 'month' },
@@ -328,14 +65,18 @@ function (jQuery, can, coplanar, config) {
         defaults: {
             template: 'ui/coplanar-gv.ejs',
             defaultModel: 'event',
-            viewEnv: viewEnv,
-            models: {
+        },
+    },{
+        setupPages: function() {
+            var models = gvModels(this.db);
+            var views = gvViews(models);
+            this.pages = {
                 'user': {
-                    model: GVModel.User,
+                    model: models.GVModel.User,
                     defaultView: 'edit',
                     views: {
                         'edit': {
-                            constructor: UserEditor,
+                            constructor: views.UserEditor,
                             routes: {
                                 '/:id/:tab': null,
                                 '/:id': null,
@@ -344,22 +85,22 @@ function (jQuery, can, coplanar, config) {
                     },
                 },
                 'event': {
-                    model: EventsModel,
+                    model: models.Event,
                     defaultView: 'calendar',
                     views: {
                         'calendar': {
-                            constructor: EventCalendar,
+                            constructor: views.EventCalendar,
                             routes: calendarRoutes,
                         },
                         'edit': {
-                            constructor: EventEditor,
+                            constructor: views.EventEditor,
                             routes: {
                                 '/:id/:tab': null,
                                 '/:id': null,
                             },
                         },
                         'create': {
-                            constructor: EventCreator,
+                            constructor: views.EventCreator,
                             routes: {
                                 '/:tab': null,
                             },
@@ -367,35 +108,40 @@ function (jQuery, can, coplanar, config) {
                     },
                 },
                 'hostel': {
-                    model: HostelModel,
-                    defaultView: null,
+                    model: models.Hostel,
+                    defaultView: 'calendar',
                     'views': {
                         'calendar': {
-                            constructor: HostelCalendar,
+                            constructor: views.HostelCalendar,
                             routes: calendarRoutes,
                         },
                         'edit': {
-                            constructor: HostelEditor,
+                            constructor: views.HostelEditor,
                             routes: {
                                 '/:id': null,
                                 '/:id/:tab': null,
                             },
                         },
                         'create': {
-                            constructor: HostelCreator,
+                            constructor: views.HostelCreator,
                             routes: {
                                 '/:tab': null,
                             },
                         },
                     },
                 },
-            },
+            };
         },
-    },{
+
         init: function() {
             var self = this;
+
+            this.db = this.options.db;
+            this.db.setLoginHandler(can.proxy(this.loginDialog, this));
+            this.pages = this.makePages();
+
             this._super.apply(this, arguments);
-            this.db = GVDb;
+
             // Get the current user session
             this.db.getUserSession(this.session)
                 .done(function(data) {
@@ -411,13 +157,6 @@ function (jQuery, can, coplanar, config) {
                 },
                 logout: can.proxy(this.logout, this),
             });
-        },
-
-        onShowViewError: function(view, route, xhr) {
-            this._super.apply(this, arguments);
-            console.log('show view error', arguments);
-            if (xhr.status === 401)
-                this.loginDialog().done(can.proxy(this.showView, this, view, route));
         },
 
         login: function(credentials) {
@@ -471,7 +210,14 @@ function (jQuery, can, coplanar, config) {
 
     can.route.ready(false);
     can.$(document).ready(function (evt) {
-        var cop = new CoplanarGV('.coplanar-app');
+        var db = new GVDb(config);
+        var app = new CoplanarGV('.coplanar-app', {
+            db: db,
+        });
+        if (steal.dev) {
+            window._db = db;
+            window._app = app;
+        }
         can.route.ready(true);
     });
 
