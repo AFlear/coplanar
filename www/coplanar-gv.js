@@ -176,6 +176,7 @@ function (jQuery, can, coplanar, config,
                 dialogClass: "ui-dialog-no-close",
                 title: 'Please login',
                 modal: true,
+                closeOnEscape: false,
                 buttons: [
                     {
                         text: 'Login',
