@@ -9,26 +9,27 @@ function(coplanar, can) {
      * Beside a few helpers this class add support for reference.
      */
     coplanar.Model = can.Model.extend({
-        modelName: null,
-        modelTypes: {},
+        convert: can.extend(can.extend({}, can.Model.convert), {
+            "default": function( val, oldVal, error, type ) {
+                if (type.substr(0,4) == 'ref:')
+                    return this.convertRef(this, val);
+                else if (type.substr(0,8) == 'refList:')
+                    return this.convertRefList(this, val);
+                else
+                    return can.Model.convert['default'].apply(this, arguments);
+            },
+        }),
 
-        init: function() {
-            this._super.apply(this, arguments);
-            if (this.modelName) {
-                var name = this.modelName;
-                this.modelTypes[name] = this;
-
-                this.serialize['ref:' + name] = can.proxy(this.serializeRef, this);
-                this.convert['ref:' + name] = can.proxy(this.convertRef, this, this);
-
-                this.serialize['refList:' + name] = can.proxy(this.serializeRefList, this);
-                this.convert['refList:' + name] = can.proxy(this.convertRefList, this, this);
-            }
-        },
-
-        getObjectContext: function() {
-            return this.modelTypes;
-        },
+        serialize: can.extend(can.extend({}, can.Model.serialize), {
+            "default": function( val, type ) {
+                if (type.substr(0,4) == 'ref:')
+                    return this.serializeRef(val);
+                else if (type.substr(0,4) == 'refList:')
+                    return this.serializeRefList(val);
+                else
+                    return can.Model.serialize['default'].apply(this, arguments);
+            },
+        }),
 
         // Return a default object for the controls. We don't override model()
         // because it must still be possible to construct empty objects for
@@ -77,9 +78,10 @@ function(coplanar, can) {
                 var m = refRe.exec(this.attributes[k]);
                 if (!m || m.length != 3)
                     continue;
-                if (!this.modelTypes[m[2]])
+                var model = can.getObject(m[2], this.getObjectContext());
+                if (!model)
                     throw('Reference to unknown type ' + m[2]);
-                ret[k] = { refType: m[1], model: this.modelTypes[m[2]] };
+                ret[k] = { refType: m[1], model: model };
             }
             return ret;
         },
