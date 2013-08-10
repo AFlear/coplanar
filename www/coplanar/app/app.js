@@ -113,32 +113,33 @@ function(coplanar, can) {
         },
 
         _showView: function(name, route) {
-            var self = this;
             var newView = this.getView(name);
-            if (newView != this.currentView &&
-                this.currentView != null )
-                this.currentView.hide();
             return can.when(newView.setRoute(route))
                 .done(can.proxy(this.onShowViewDone, this, name, route, newView))
-                .fail(can.proxy(this.onShowViewError, this, name, route));
+                .fail(can.proxy(this.onShowViewError, this, name, route))
+                .always(can.proxy(function() {
+                    this._viewQueue.shift();
+                    if (this._viewQueue.length > 0)
+                        this._showView.apply(this, this._viewQueue[0]);
+                }, this));
         },
 
         onShowViewDone: function(name, route, newView) {
-            if (newView != this.currentView)
+            if (newView != this.currentView) {
+                if (this.currentView != null)
+                    this.currentView.hide();
                 newView.show();
+            }
             this.currentView = newView;
             this.currentViewName = name;
-            this._viewQueue.shift();
-            if (this._viewQueue.length > 0)
-                this._showView.apply(this, this._viewQueue[0]);
         },
 
-        onShowViewError: function() {
-            if (this.currentView != null)
-                this.currentView.show();
-            this._viewQueue.shift();
-            if (this._viewQueue.length > 0)
-                this._showView.apply(this, this._viewQueue[0]);
+        onShowViewError: function(name, route, err) {
+            var msg = null;
+            if (err != null && err.statusText != null)
+                msg = err.statusText;
+            this.messageDialog('Error', "Failed to open " + can.route.url(route) +
+                               (msg != null ? ": " + msg + "." : "."));
         },
 
 
@@ -148,6 +149,23 @@ function(coplanar, can) {
                 .on("dialogclose", function () {
                     div.remove();
                 });
+        },
+
+        messageDialog: function(title, message, buttons) {
+            return this.dialog({
+                dialogClass: "ui-dialog-no-close",
+                title: title,
+                modal: true,
+                closeOnEscape: false,
+                buttons: buttons || {
+                    'Ok': function() {
+                        can.$(this).dialog('close');
+                    },
+                },
+            })
+                .append(can.$('<p>', {
+                    text: message,
+                }));
         },
 
         editorDialog: function(template, obj, dialogOptions) {
