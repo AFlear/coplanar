@@ -98,49 +98,43 @@ function(Control, can, jQuery) {
         },
 
         setRoute: function(route) {
-            var def, self = this;
-            def = can.when();
-            def.done(function () {
-                // Normalize the view name
-                var calendarView = route.calendarView || self.options.defaultCalendarView;
-                if (calendarView !== 'month' &&
-                    calendarView !== 'week' &&
-                    calendarView !== 'day')
-                    calendarView = 'month';
+            // Normalize the view name
+            var calendarView = route.calendarView || this.options.defaultCalendarView;
+            if (calendarView !== 'month' &&
+                calendarView !== 'week' &&
+                calendarView !== 'day')
+                calendarView = 'month';
 
-                // Map to fullcalendar names
-                var fcView;
-                if (calendarView === 'week')
-                    fcView = 'basicWeek';
-                else if (calendarView === 'day')
-                    fcView = 'basicDay';
-                else
-                    fcView = 'month';
+            // Map to fullcalendar names
+            var fcView;
+            if (calendarView === 'week')
+                fcView = 'basicWeek';
+            else if (calendarView === 'day')
+                fcView = 'basicDay';
+            else
+                fcView = 'month';
 
-                // Change the view if needed
-                if (self.element.fullCalendar('getView').name !== fcView) {
-                    console.log('Change view');
-                    self.element.fullCalendar('changeView', fcView);
-                }
+            // Change the view if needed
+            if (this.element.fullCalendar('getView').name !== fcView) {
+                console.log('Change view');
+                this.element.fullCalendar('changeView', fcView);
+            }
 
-                // Set the date
-                var date, today = new Date();
-                var year = route.year ? parseInt(route.year) : today.getFullYear();
-                if (calendarView === 'week') {
-                    date = route.week ?
-                        Calendar.weekToDate(year, parseInt(route.week), 1) :
-                        today;
-                } else {
-                    var month = route.month ? parseInt(route.month)-1 : today.getMonth();
-                    var day = route.day ? parseInt(route.day) : today.getDate();
-                    date = new Date(year, month, day);
-                }
+            // Set the date
+            var date, today = new Date();
+            var year = route.year ? parseInt(route.year) : today.getFullYear();
+            if (calendarView === 'week') {
+                date = route.week ?
+                    Calendar.weekToDate(year, parseInt(route.week), 1) :
+                    today;
+            } else {
+                var month = route.month ? parseInt(route.month)-1 : today.getMonth();
+                var day = route.day ? parseInt(route.day) : today.getDate();
+                date = new Date(year, month, day);
+            }
 
-                console.log('Goto date:', date);
-                self.element.fullCalendar('gotoDate', date)
-            });
-
-            return def;
+            console.log('Goto date:', date);
+            this.element.fullCalendar('gotoDate', date)
         }
     });
 
