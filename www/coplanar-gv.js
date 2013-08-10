@@ -29,19 +29,6 @@ function (jQuery, can, coplanar, config,
 
 
     /*
-     * Data models
-     */
-
-    var LoginModel = can.Model.extend({
-        init: function() {
-            this._super.apply(this, arguments);
-            this.validatePresenceOf("name");
-            this.validatePresenceOf("password");
-        },
-    },{
-    });
-
-    /*
      * The coplanar application
      */
 
@@ -133,79 +120,13 @@ function (jQuery, can, coplanar, config,
             };
         },
 
-        init: function() {
-            var self = this;
-
-            this.db = this.options.db;
-            this.db.setLoginHandler(can.proxy(this.loginDialog, this));
-            this.pages = this.makePages();
-
-            this._super.apply(this, arguments);
-
-            // Get the current user session
-            this.db.getUserSession(this.session)
-                .done(function(data) {
-                    self.session.attr(data);
-                });
-        },
-
         newEnv: function() {
             var self = this;
             return can.extend(this._super(), {
                 getViewTitle: function() {
                     return can.route.attr('model') + ' / ' + can.route.attr('view');
                 },
-                logout: can.proxy(this.logout, this),
             });
-        },
-
-        login: function(credentials) {
-            var self = this;
-            return this.db.login(credentials)
-                .done(function(update) {
-                    self.session.attr(update);
-                    return self.session;
-                });
-        },
-
-        loginDialog: function() {
-            var self = this;
-            var credentials = new LoginModel({name:'', password: '', statusMsg: ''});
-            var def = new can.Deferred();
-            this.editorDialog('ui/login.ejs', credentials, {
-                dialogClass: "ui-dialog-no-close",
-                title: 'Please login',
-                modal: true,
-                closeOnEscape: false,
-                buttons: [
-                    {
-                        text: 'Login',
-                        click: function(evt) {
-                            var dialog = can.$(this);
-                            self.login(credentials.serialize())
-                                .done(function(session) {
-                                    console.log('Logged in as', credentials.name);
-                                    dialog.dialog('close');
-                                    def.resolve(credentials);
-                                })
-                                .fail(function () {
-                                    console.log('Login failed!');
-                                    credentials.attr('statusMsg', 'Login failed');
-                                });
-                        },
-                    },
-                ],
-            });
-
-            return def;
-        },
-
-        logout: function () {
-            var self = this;
-            this.db.logout(this.session)
-                .done(function(data) {
-                    self.session.attr('username', '');
-                });
         },
     });
 

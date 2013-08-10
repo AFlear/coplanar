@@ -2,6 +2,15 @@ steal('coplanar/base.js', 'can',
       'coplanar/control/objecteditor',
 function(coplanar, can) {
 
+    var LoginModel = can.Model.extend({
+        init: function() {
+            this._super.apply(this, arguments);
+            this.validatePresenceOf("name");
+            this.validatePresenceOf("password");
+        },
+    },{
+    });
+
     /*
      * The main app object
      */
@@ -16,9 +25,15 @@ function(coplanar, can) {
             this._super.apply(this, arguments);
 
             this.session = new can.Model({username: '', password: ''});
+            this.pages = {};
             this.views = {};
             this._viewQueue = [];
             this.currentView = null;
+
+            this.db = this.options.db;
+            this.db.setLoginHandler(can.proxy(this.loginDialog, this));
+
+            this.setupPages();
 
             if (this.options.defaultModel) {
                 can.route("", {
@@ -46,7 +61,16 @@ function(coplanar, can) {
                 }
             }
 
+            // Get the current user session
+            this.db.getUserSession(this.session)
+                .done(can.proxy(function(data) {
+                    this.session.attr(data);
+                }, this));
+
             this.open(this.session);
+        },
+
+        setupPages: function() {
         },
 
         createView: function(name, klass, model) {
@@ -136,12 +160,62 @@ function(coplanar, can) {
             return editor;
         },
 
+        login: function(credentials) {
+            var self = this;
+            return this.db.login(credentials)
+                .done(function(update) {
+                    self.session.attr(update);
+                    return self.session;
+                });
+        },
+
+        loginDialog: function() {
+            var self = this;
+            var credentials = new LoginModel({name:'', password: '', statusMsg: ''});
+            var def = new can.Deferred();
+            this.editorDialog('ui/login.ejs', credentials, {
+                dialogClass: "ui-dialog-no-close",
+                title: 'Please login',
+                modal: true,
+                closeOnEscape: false,
+                buttons: [
+                    {
+                        text: 'Login',
+                        click: function(evt) {
+                            var dialog = can.$(this);
+                            self.login(credentials.serialize())
+                                .done(function(session) {
+                                    console.log('Logged in as', credentials.name);
+                                    dialog.dialog('close');
+                                    def.resolve(credentials);
+                                })
+                                .fail(function () {
+                                    console.log('Login failed!');
+                                    credentials.attr('statusMsg', 'Login failed');
+                                });
+                        },
+                    },
+                ],
+            });
+
+            return def;
+        },
+
+        logout: function () {
+            var self = this;
+            this.db.logout(this.session)
+                .done(function(data) {
+                    self.session.attr('username', '');
+                });
+        },
+
         newEnv: function() {
             var self = this;
             return can.$.extend(this._super(), {
                 getViewName: function() {
                     return self.currentViewName;
                 },
+                logout: can.proxy(this.logout, this),
             });
         },
 
