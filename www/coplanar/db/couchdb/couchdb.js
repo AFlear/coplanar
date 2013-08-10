@@ -40,28 +40,43 @@ function(Db, can) {
             return def;
         },
 
+        updateSession: function(req) {
+            var def = new can.Deferred();
+            req
+                .done(can.proxy(function(userCtx) {
+                    // If we are logged in get the security object
+                    (userCtx.name != null ?
+                     this.ajax('/' + this.dbName + '/_security') :
+                     can.when())
+                        .done(function(securityCtx) {
+                            def.resolve({
+                                username: userCtx.name,
+                                roles:    userCtx.roles,
+                                security: securityCtx,
+                            });
+                        })
+                        .fail(can.proxy(def.reject, def));
+                }, this))
+                .fail(can.proxy(def.reject, def));
+            return def;
+        },
+
         login: function(creds) {
-            return this.ajax(
-                '/_session', {
-                    type: 'POST',
-                    contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify(creds),
-                })
-                .then(function(data) {
-                    return {
-                        username: data.name,
-                        roles:    data.roles,
-                    };
-                });
+            return this.updateSession(
+                this.ajax(
+                    '/_session', {
+                        type: 'POST',
+                        contentType: 'application/json; charset=UTF-8',
+                        data: JSON.stringify(creds),
+                    }));
         },
 
         getUserSession: function() {
-            return this.ajax('/_session')
-                .then(function(data) {
-                    return {
-                        username: data.userCtx.name,
-                    };
-                });
+            return this.updateSession(
+                this.ajax('/_session')
+                    .then(function(data) {
+                        return data.userCtx;
+                    }));
         },
 
         logout: function() {
