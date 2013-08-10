@@ -58,6 +58,8 @@ function(Control, can, jQuery) {
                 dayRender: can.proxy(this.dayRender, this)
             }, this.options.calendarOptions));
             this.options.model.bind('updated', can.proxy(this.onModelUpdated, this));
+            this.options.model.bind('created', can.proxy(this.onModelUpdated, this));
+            this.options.model.bind('destroyed', can.proxy(this.onModelUpdated, this));
         },
 
         makeCalendarEvent: function(data) {
