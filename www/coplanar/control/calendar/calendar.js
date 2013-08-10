@@ -21,8 +21,6 @@ function(Control, can, jQuery) {
     },{
         init: function () {
             this._super.apply(this, arguments);
-            this._eventsFetched = undefined;
-            this._events = [];
             var inited = false;
             this.element.fullCalendar(can.extend({
                 viewDisplay: function(view) {
@@ -52,7 +50,8 @@ function(Control, can, jQuery) {
                         }, true);
                     }
                 },
-                events: this._events,
+                events: can.proxy(this.getEvents, this),
+                eventDataTransform: can.proxy(this.makeCalendarEvent, this),
                 eventClick: can.proxy(this.eventClick, this),
                 dayClick: can.proxy(this.dayClick, this),
                 eventAfterRender: can.proxy(this.eventAfterRender, this),
@@ -70,24 +69,11 @@ function(Control, can, jQuery) {
                 .done(callback);
         },
 
-        updateEvents: function() {
-            var self = this;
-            return this.getEvents()
-                .done(function(events) {
-                    self._events.length = 0;
-                    for (var i in events)
-                        self._events.push(self.makeCalendarEvent(events[i]));
-                    self.element.fullCalendar('refetchEvents')
-                });
-        },
-
-
         onModelUpdated: function (domEvent, obj) {
             // This only work while the calendar is visible :(
             // To over come this we force a rerender in the show method.
             console.log('onModelUpdated !!!');
-            //this.element.fullCalendar('updateEvent', obj);
-            this.updateEvents();
+            this.element.fullCalendar('refetchEvents');
         },
 
         eventClick: function(event, jsEvent, view) {
@@ -113,18 +99,7 @@ function(Control, can, jQuery) {
 
         setRoute: function(route) {
             var def, self = this;
-            if (this._eventsFetched === undefined) {
-                this._eventsFetched = false;
-                def = this.updateEvents()
-                    .done(function() {
-                        self._eventsFetched = true;
-                    })
-                    .fail(function() {
-                        self._eventsFetched = undefined;
-                    });
-            } else
-                def = can.when();
-
+            def = can.when();
             def.done(function () {
                 // Normalize the view name
                 var calendarView = route.calendarView || self.options.defaultCalendarView;
