@@ -24,7 +24,7 @@ function(coplanar, can) {
         init: function() {
             this._super.apply(this, arguments);
 
-            this.session = new can.Model({username: '', password: ''});
+            this.session = new this.constructor.Session({username: ''});
             this.pages = {};
             this.views = {};
             this._viewQueue = [];
@@ -279,6 +279,8 @@ function(coplanar, can) {
         'route': function() {
         },
     });
+
+    coplanar.App.Session = can.Model.extend({});
 
     return coplanar.App;
 });
