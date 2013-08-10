@@ -12,7 +12,7 @@
   <span><%= getViewTitle() %></span>
 
   <span class="coplanar-user coplanar-toplevel-menu">
-    <%= data.attr('username') %>
+    <%= data.attr('username') || 'Anonymous' %>
     <ul
        <%= (el) -> el.menu() %>
       >
