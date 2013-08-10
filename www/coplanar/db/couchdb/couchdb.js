@@ -68,6 +68,11 @@ function(Db, can) {
                         type: 'POST',
                         contentType: 'application/json; charset=UTF-8',
                         data: JSON.stringify(creds),
+                    })
+                    .then(function(userCtx) {
+                        if (userCtx.ok == true && userCtx.name == null)
+                            userCtx.name = creds.name;
+                        return userCtx;
                     }));
         },
 
