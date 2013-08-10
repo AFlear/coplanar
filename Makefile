@@ -1,6 +1,9 @@
 .PHONY: all
 all: build
 
+BUILD_DIR := build
+APP_DIR   := www
+
 APP_FILES := 								\
 	index.html							\
 	coplanar-gv.html						\
@@ -17,7 +20,8 @@ APP_FILES := 								\
 	ui/model-editor.ejs						\
 	ui/user-editor.ejs						\
 
-# We need to find a way to produce dependency information for make
+# Include the dependencies if we have some
+-include build/production.dep
 build/production.js: www/coplanar-gv.js www/stealconfig.js Makefile
 	@mkdir -p $(@D) && cd $(<D) && \
 		steal/js steal/buildjs $(<F) -to "$(abspath $(@D))"
