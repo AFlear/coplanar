@@ -25,11 +25,16 @@ build/production.js: www/coplanar-gv.js www/stealconfig.js Makefile
 	@mkdir -p $(@D) && cd $(<D) && \
 		steal/js steal/buildjs $(<F) -to "$(abspath $(@D))"
 
-build/coplanar-gv.html: www/coplanar-gv.html
+build/.rev: FORCE
+	@git rev-parse HEAD > $@.new
+	@cmp $@ $@.new 2> /dev/null && rm -f $@.new || mv $@.new $@
+
+build/coplanar-gv.html: www/coplanar-gv.html build/.rev
 	@echo 	" Generate	coplanar-gv.html"
-	@mkdir -p $(@D) && 						\
-		sed 's,steal/steal.js,steal/steal.production.js,' $<	\
-			> $@ || (rm $@ ; false)
+	@mkdir -p $(@D) && 									\
+		sed -e 's,steal/steal.js,steal/steal.production.js,' 				\
+		    -e "s,steal\\.suffix = null,steal.suffix = 'rev=$$(cat build/.rev)',"	\
+			$< > $@ || (rm $@ ; false)
 
 build/index.html: build/coplanar-gv.html
 	@echo	" Link		index.html"
@@ -95,3 +100,5 @@ lib/%/dist: | lib/%/node_modules lib/%/Gruntfile.js
 
 lib/%/package.json lib/%/Gruntfile.js:
 	git submodule update --init -f $(@D)
+
+.PHONY: FORCE
