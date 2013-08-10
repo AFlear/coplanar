@@ -6,7 +6,7 @@ function(coplanar, can) {
      * models bound to a given database.
      */
 
-    return function (db) {
+    return function (db, session) {
         var models = {};
 
         // We use a large DB mixing various document types. Documents must
@@ -40,6 +40,21 @@ function(coplanar, can) {
                 this.validatePresenceOf("state");
                 this.validatePresenceOf("start");
                 //this.validatePresenceOf("title");
+                this.validate(
+                    "state",
+                    function(value) {
+                        if (value == 'unconfirmed') {
+                            if (this.state != null && this.state != 'unconfirmed')
+                                return 'Forbiden state';
+                        } else if (value == 'confirmed') {
+                            if (!session.isAdmin())
+                                return 'Only admins can confirm';
+                        } else if (value == 'canceled') {
+                            if (!session.isAdmin() && this.state == 'confirmed')
+                                return 'Only admins can cancel';
+                        } else
+                            return 'Invalid state';
+                    });
             },
             getDefaultObject: function (data) {
                 return this._super(can.extend({

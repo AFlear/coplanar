@@ -13,7 +13,9 @@
       <select class="field-value"
               <%= (el) -> bindValue(el, 'state') %>>
         <option value="unconfirmed">Unconfirmed</option><!-- Unbestätigt -->
-        <option value="confirmed">Confirmed</option>    <!-- Bestätigt -->
+        <% if (session().isAdmin()) { %>
+          <option value="confirmed">Confirmed</option>    <!-- Bestätigt -->
+        <% } %>
         <option value="canceled">Canceled</option>      <!-- Annulliert -->
       </select>
     </div>

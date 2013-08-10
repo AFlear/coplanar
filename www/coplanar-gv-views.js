@@ -5,7 +5,7 @@ function(coplanar, can) {
      * This module provide a constructor function that create the
      * views using the provided models.
      */
-    return function (models) {
+    return function (models, session) {
         var views = {};
         /*
          * Generic Controls
@@ -38,6 +38,15 @@ function(coplanar, can) {
                 date.setDate(date.getDate()+1);
                 can.$('input[name="end"]', el.parent())
                     .datepicker('option', 'minDate', this.formatDate(date));
+            },
+
+            newEnv: function() {
+                var self = this;
+                return can.$.extend(this._super(), {
+                    "session": function() {
+                        return session;
+                    },
+                });
             },
         });
 

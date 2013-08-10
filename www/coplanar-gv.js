@@ -55,8 +55,8 @@ function (jQuery, can, coplanar, config,
         },
     },{
         setupPages: function() {
-            var models = gvModels(this.db);
-            var views = gvViews(models);
+            var models = gvModels(this.db, this.session);
+            var views = gvViews(models, this.session);
             this.pages = {
                 'user': {
                     model: models.GVModel.User,
@@ -129,6 +129,14 @@ function (jQuery, can, coplanar, config,
             });
         },
     });
+
+    CoplanarGV.Session = coplanar.App.Session.extend({
+        isAdmin: function() {
+            return this.roles != null && this.roles.indexOf != null &&
+                this.roles.indexOf('_admin') !== -1;
+        },
+    });
+
 
     can.route.ready(false);
     can.$(document).ready(function (evt) {
