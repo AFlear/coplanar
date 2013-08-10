@@ -7,7 +7,6 @@ APP_DIR   := www
 APP_FILES := 								\
 	index.html							\
 	coplanar-gv.html						\
-	coplanar-gv.js							\
 	production.js							\
 	coplanar.css							\
 	steal/steal.production.js					\
