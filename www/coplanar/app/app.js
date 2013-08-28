@@ -168,11 +168,12 @@ function(coplanar, can) {
                 }));
         },
 
-        editorDialog: function(template, obj, dialogOptions) {
+        editorDialog: function(template, obj, dialogOptions, viewEnv) {
             var div = this.dialog(dialogOptions);
             var editor = new coplanar.Control.ObjectEditor(div, {
                 template: template,
                 object: obj,
+                viewEnv: viewEnv,
             });
             div.data('editor', editor);
             return editor;
