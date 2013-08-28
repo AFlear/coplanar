@@ -192,29 +192,33 @@ function(coplanar, can) {
             var self = this;
             var credentials = new LoginModel({name:'', password: '', statusMsg: ''});
             var def = new can.Deferred();
-            this.editorDialog('ui/login.ejs', credentials, {
+            var onLoginClick = function() {
+                var dialog = can.$(this);
+                self.login(credentials.serialize())
+                    .done(function(session) {
+                        console.log('Logged in as', credentials.name);
+                        dialog.dialog('close');
+                        def.resolve(credentials);
+                    })
+                    .fail(function () {
+                        console.log('Login failed!');
+                        credentials.attr('statusMsg', 'Login failed');
+                    });
+            };
+            var editor = this.editorDialog('ui/login.ejs', credentials, {
                 dialogClass: "ui-dialog-no-close",
                 title: 'Please login',
                 modal: true,
                 closeOnEscape: false,
-                buttons: [
-                    {
-                        text: 'Login',
-                        click: function(evt) {
-                            var dialog = can.$(this);
-                            self.login(credentials.serialize())
-                                .done(function(session) {
-                                    console.log('Logged in as', credentials.name);
-                                    dialog.dialog('close');
-                                    def.resolve(credentials);
-                                })
-                                .fail(function () {
-                                    console.log('Login failed!');
-                                    credentials.attr('statusMsg', 'Login failed');
-                                });
-                        },
-                    },
-                ],
+                buttons: {
+                    'Login': onLoginClick,
+                },
+            }, {
+                loginOnEnter: function(evt) {
+                    if (evt.which === 13) {
+                        onLoginClick.apply(editor.element);
+                    }
+                },
             });
 
             return def;
