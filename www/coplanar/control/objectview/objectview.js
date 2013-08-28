@@ -42,11 +42,14 @@ function(Control, can) {
             this.close();
 
             this._object = obj;
+            this._autoFocus = null;
             this.element.html(this.render());
             if (obj.bind) {
                 this._onObjectChange = can.proxy(this.onObjectChange, this);
                 this._object = obj.bind('change', this._onObjectChange);
             }
+            if (this._autoFocus != null)
+                this._autoFocus.focus();
         },
 
         close: function() {
@@ -57,6 +60,12 @@ function(Control, can) {
             this._onObjectChange = null;
 
             this.element.html('');
+        },
+
+        show: function() {
+            this._super.apply(this, arguments);
+            if (this._autoFocus != null)
+                this._autoFocus.focus();
         },
 
         /*
@@ -83,6 +92,10 @@ function(Control, can) {
 
                 anchor: function(args, abs) {
                     return this.url(args, abs).substr(1);
+                },
+
+                autoFocus: function(el) {
+                    view._autoFocus = el;
                 },
             }, this.options.viewEnv || {});
         },
