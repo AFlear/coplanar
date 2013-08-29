@@ -24,4 +24,7 @@ steal.config({
         'jquery-ui/jquery-ui.js': 'jquery-ui/jquery-ui.min.js',
         'fullcalendar/fullcalendar.js': 'fullcalendar/fullcalendar.min.js',
     },
+    ext: {
+        'ejs': 'can/view/ejs',
+    },
 });
