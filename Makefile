@@ -26,6 +26,7 @@ build/production.js: www/coplanar-gv.js www/stealconfig.js Makefile
 		steal/js steal/buildjs $(<F) -to "$(abspath $(@D))"
 
 build/.rev: FORCE
+	@mkdir -p $(@D)
 	@git rev-parse HEAD > $@.new
 	@cmp $@ $@.new 2> /dev/null && rm -f $@.new || mv $@.new $@
 
