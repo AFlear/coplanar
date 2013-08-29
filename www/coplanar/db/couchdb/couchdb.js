@@ -153,16 +153,18 @@ function(Db, can) {
                 type: 'DELETE',
             });
         },
-    });
 
-    can.extend(Db.CouchDB, {
-        User: Db.CouchDB.extend({
-            dbName: '_users',
+        UserDb: function () {
+            var db = this;
+            return Db.CouchDB.extend({
+                baseURL: db.baseURL,
+                dbName: '_users',
 
-            serializeId: function (id) {
-                return 'org.couchdb.user:' + id;
-            },
-        }, {}),
+                serializeId: function (id) {
+                    return 'org.couchdb.user:' + id;
+                },
+            });
+        },
     });
 
     return Db.CouchDB;
