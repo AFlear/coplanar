@@ -8,7 +8,7 @@
     <li><a href="<%= url({tab: 'shifts'}) %>">Shifts</a></li-->
   </ul>
   <div id="<%= anchor({tab: ''}) %>">
-    <div>
+    <div style="<%= data.isNew() ? 'display: none;' : '' %>">
       <div class="field-name">Status</div>
       <select class="field-value"
               <%= (el) -> bindValue(el, 'state') %>>
