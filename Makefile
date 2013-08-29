@@ -28,7 +28,7 @@ build/production.js: www/coplanar-gv.js www/stealconfig.js Makefile
 build/.rev: FORCE
 	@mkdir -p $(@D)
 	@git rev-parse HEAD > $@.new
-	@cmp $@ $@.new 2> /dev/null && rm -f $@.new || mv $@.new $@
+	@cmp $@ $@.new > /dev/null 2>&1 && rm -f $@.new || mv $@.new $@
 
 build/coplanar-gv.html: www/coplanar-gv.html build/.rev
 	@echo 	" Generate	coplanar-gv.html"
