@@ -1,5 +1,6 @@
 steal('coplanar/base.js', 'can',
       'coplanar/control/objecteditor',
+      'ui/login.ejs',
 function(coplanar, can) {
 
     var LoginModel = can.Model.extend({

@@ -1,5 +1,6 @@
 steal('coplanar/control', 'can',
       'coplanar/control/objecteditor',
+      'ui/model-editor.ejs',
 function(Control, can) {
 
     Control.ModelEditor = Control.ObjectEditor.extend({

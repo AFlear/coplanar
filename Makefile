@@ -10,14 +10,6 @@ APP_FILES := 								\
 	production.js							\
 	coplanar.css							\
 	steal/steal.production.js					\
-	ui/coplanar-gv.ejs						\
-	ui/event-editor.ejs						\
-	ui/event-program-editor.ejs					\
-	ui/hostel-editor.ejs						\
-	ui/list-editor-accordion.ejs					\
-	ui/login.ejs							\
-	ui/model-editor.ejs						\
-	ui/user-editor.ejs						\
 
 # Include the dependencies if we have some
 -include build/production.dep

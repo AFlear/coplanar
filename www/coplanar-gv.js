@@ -5,6 +5,7 @@ steal('jquery', 'can', 'coplanar', './coplanar-gv-config.js',
       'coplanar/control/modeleditor',
       'coplanar/control/listeditor',
       'coplanar/control/calendar',
+      'ui/coplanar-gv.ejs',
 function (jQuery, can, coplanar, config,
           gvModels, gvViews) {
 

@@ -1,5 +1,11 @@
 steal("coplanar", "can",
       'coplanar/model/db',
+      'ui/user-editor.ejs',
+      'ui/list-editor-accordion.ejs',
+      'ui/event-program-editor.ejs',
+      'ui/hostel-editor.ejs',
+      'ui/event-editor.ejs',
+      'ui/hostel-editor.ejs',
 function(coplanar, can) {
     /*
      * This module provide a constructor function that create the
