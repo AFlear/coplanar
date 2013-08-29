@@ -46,7 +46,7 @@ function(Control, can) {
             this.element.html(this.render());
             if (obj.bind) {
                 this._onObjectChange = can.proxy(this.onObjectChange, this);
-                this._object = obj.bind('change', this._onObjectChange);
+                this._object.bind('change', this._onObjectChange);
             }
             if (this._autoFocus != null)
                 this._autoFocus.focus();
