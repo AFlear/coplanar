@@ -153,7 +153,7 @@ function(Db, can) {
                 type: 'DELETE',
             });
         },
-    }, {});
+    });
 
     can.extend(Db.CouchDB, {
         User: Db.CouchDB.extend({
