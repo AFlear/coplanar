@@ -3,13 +3,15 @@
      <%= (el) -> el.append(renderData()) %>
     ></div>
   <div class="coplanar-editor-buttons">
-    <button>
-      <%= data.isNew() ? 'Create' : 'Save'  %>
+    <button style="<%= data.isNew() ? '' : 'display: none;'%>"
+            <%= (el) -> saveButton(el.button()) %>
+      >
+      Create
     </button>
-    <span
-       <%# We must init the button here to avoid a clash %>
-       <%# with the live binding %>
-       <%= (el) -> saveButton(el.prev().button()) %>
-      ></span>
+    <button style="<%= data.isNew() ? 'display: none;' : ''%>"
+       <%= (el) -> saveButton(el.button()) %>
+      >
+      Save
+    </button>
   </div>
 </div>
