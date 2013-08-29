@@ -59,7 +59,7 @@ function (jQuery, can, coplanar, config,
             var views = gvViews(models, this.session);
             this.pages = {
                 'user': {
-                    model: models.GVModel.User,
+                    model: models.User,
                     defaultView: 'edit',
                     views: {
                         'edit': {

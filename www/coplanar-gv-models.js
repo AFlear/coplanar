@@ -112,6 +112,12 @@ function(coplanar, can) {
         },{
         });
 
+        var UserDb = db.UserDb();
+        models.User = coplanar.Model.Db.extend({
+            db: new UserDb(),
+        },{
+        });
+
         return models;
     };
 });
