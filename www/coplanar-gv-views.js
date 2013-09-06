@@ -163,6 +163,24 @@ function(coplanar, can) {
                     }).appendTo(can.$('.fc-event-inner', element));
                 element.addClass('fc-event-' + event.state);
             },
+
+            setRoute: function(route) {
+                var attrs = ["state", "eventType", "location"];
+                var updateData = false;
+                for (var i in attrs) {
+                    var attr = attrs[i];
+                    if (route[attr] !== this.eventsFilter[attr]) {
+                        updateData = true;
+                        if (route[attr] != null)
+                            this.eventsFilter[attr] = route[attr];
+                        else
+                            delete this.eventsFilter[attr];
+                    }
+                }
+                if (updateData)
+                    this.element.fullCalendar('refetchEvents');
+                this._super(route, updateData);
+            },
         });
 
         views.HostelCalendar = views.EventCalendar.extend({
