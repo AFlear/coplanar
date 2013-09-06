@@ -21,6 +21,7 @@ function(Control, can, jQuery) {
     },{
         init: function () {
             this._super.apply(this, arguments);
+            this.eventsFilter = {};
             var inited = false;
             this.element.fullCalendar(can.extend({
                 viewDisplay: function(view) {
@@ -67,7 +68,7 @@ function(Control, can, jQuery) {
         },
 
         getEvents: function(start, end, callback) {
-            return this.options.model.findAll({})
+            return this.options.model.findAll(this.eventsFilter)
                 .done(callback);
         },
 
