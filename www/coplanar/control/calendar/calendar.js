@@ -136,7 +136,7 @@ function(Control, can, jQuery) {
             }
 
             console.log('Goto date:', date);
-            this.element.fullCalendar('gotoDate', date)
+            this.element.fullCalendar('gotoDate', date);
         }
     });
 
