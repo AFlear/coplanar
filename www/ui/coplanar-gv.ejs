@@ -4,7 +4,15 @@
     <ul
        <%= (el) -> el.menu() %>
       >
-      <li><a href="<%= url({ model: 'event',   view: 'calendar'}, true) %>">Events</a></li>
+      <li>
+        <a href="<%= url({ model: 'event',   view: 'calendar'}, true) %>">Events</a>
+        <ul>
+          <li><a href="<%= url({ model: 'event', view: 'calendar', location: 'Druckerei'}, true) %>">Druckerei</a></li>
+          <li><a href="<%= url({ model: 'event', view: 'calendar', location: 'Fabrik Links'}, true) %>">Fabrik&nbsp;Links</a></li>
+          <li><a href="<%= url({ model: 'event', view: 'calendar', location: 'Fabrik Rechts'}, true) %>">Fabrik&nbsp;Rechts</a></li>
+          <li><a href="<%= url({ model: 'event', view: 'calendar', location: 'Jupi'}, true) %>">Jupi</a></li>
+        </ul>
+      </li>
       <li><a href="<%= url({ model: 'hostel',  view: 'calendar'}, true) %>">Hostel</a></li>
     </ul>
   </span>
