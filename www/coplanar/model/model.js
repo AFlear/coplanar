@@ -154,6 +154,22 @@ function(coplanar, can) {
                 if (deref !== true)
                     return findAllData.call(this, filter)
                     .then(function(objs) {
+                        if (filter && Object.keys(filter).length > 0) {
+                            var filteredObjs = [];
+                            for (var i in objs) {
+                                var obj = objs[i];
+                                var add = true;
+                                for (var k in filter) {
+                                    if (obj[k] !== filter[k]) {
+                                        add = false;
+                                        break;
+                                    }
+                                }
+                                if (add)
+                                    filteredObjs.push(obj);
+                            }
+                            objs = filteredObjs;
+                        }
                         return self.models(objs);
                     })
                     .then(onSuccess, onError);
