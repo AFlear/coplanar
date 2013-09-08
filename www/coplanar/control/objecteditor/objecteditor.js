@@ -37,6 +37,7 @@ function(Control, can) {
                     function setErrors(errors) {
                         el.attr('title','Error: ' + errors[0]);
                         el.addClass('ui-state-error');
+                        el.tooltip('disable');
                         el.tooltip('enable');
                     }
 
