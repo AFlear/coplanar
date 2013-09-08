@@ -78,7 +78,6 @@ function(coplanar, can) {
 
             init: function() {
                 this._super.apply(this, arguments);
-                this.validatePresenceOf("start");
                 this.validatePresenceOf("personCount");
                 this.validatePresenceOf("contact");
             },
