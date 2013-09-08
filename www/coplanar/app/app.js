@@ -240,6 +240,7 @@ function(coplanar, can) {
                     return self.currentViewName;
                 },
                 logout: can.proxy(this.logout, this),
+                login: can.proxy(this.loginDialog, this),
             });
         },
 
