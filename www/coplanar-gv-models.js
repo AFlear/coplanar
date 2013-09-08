@@ -88,6 +88,7 @@ function(coplanar, can) {
             init: function() {
                 this._super.apply(this, arguments);
                 this.validatePresenceOf("start");
+                this.validateTime("start");
                 this.validatePresenceOf("showType");
                 this.validatePresenceOf("title");
             },
