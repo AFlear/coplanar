@@ -21,12 +21,20 @@
 
   <span class="coplanar-user coplanar-toplevel-menu">
     <%= data.attr('username') || 'Anonymous' %>
-    <ul
-       <%= (el) -> el.menu() %>
-      >
-      <li><a href="<%= url({ model: 'user', view: 'edit', id: data.attr('username')}, true) %>">Edit</a></li>
-      <li><a href="javascript:;" <%= (el) -> el.click(logout) %>>Logout</a></li>
-    </ul>
+    <% if (data.attr('username')) { %>
+      <ul
+         <%= (el) -> el.menu() %>
+        >
+         <li><a href="<%= url({ model: 'user', view: 'edit', id: data.attr('username')}, true) %>">Edit</a></li>
+        <li><a href="javascript:;" <%= (el) -> el.click(logout) %>>Logout</a></li>
+      </ul>
+    <% } else { %>
+      <ul
+         <%= (el) -> el.menu() %>
+        >
+        <li><a href="javascript:;" <%= (el) -> el.click(login) %>>Login</a></li>
+      </ul>
+    <% } %>
     </span>
   </span>
 </div>
