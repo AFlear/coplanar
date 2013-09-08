@@ -39,6 +39,8 @@ function(coplanar, can) {
                 this._super.apply(this, arguments);
                 this.validatePresenceOf("state");
                 this.validatePresenceOf("start");
+                this.validateDate("start");
+                this.validateDate("end");
                 //this.validatePresenceOf("title");
                 this.validate(
                     "state",
