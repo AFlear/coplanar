@@ -190,6 +190,41 @@ function(coplanar, can) {
             };
         },
 
+        validationMessages: can.extend(can.Model.validationMessages, {
+            dateFormat: 'must be a date (YYYY/MM/DD)',
+            timeFormat: 'must be a time (HH:MM)',
+            dateTimeFormat: 'must be a date and time (YYYY/MM/DD HH:MM)',
+        }),
+
+        dateRe: '[0-9]{4}/((0[1-9])|(1[0-2]))/((0[1-9])|([12][0-9])|(3[01]))',
+        timeRe: '(([01][0-9])|(2[0-3])):[0-5][0-9]',
+
+        validateDate: function (attrs, options) {
+            this.validateFormatOf(
+                attrs, '^' + this.dateRe + '$',
+                can.extend({
+                    message: this.validationMessages.dateFormat,
+                }, options)
+            );
+        },
+
+        validateTime: function (attrs, options) {
+            this.validateFormatOf(
+                attrs, '^' + this.timeRe + '$',
+                can.extend({
+                    message: this.validationMessages.timeFormat,
+                }, options)
+            );
+        },
+
+        validateDateTime: function (attrs, options) {
+            this.validateFormatOf(
+                attrs, '^' + this.dateRe + ' +' + this.timeRe + '$',
+                can.extend({
+                    message: this.validationMessages.dateTimeFormat,
+                }, options)
+            );
+        },
     },{
         getId: function() {
             return this.attr(this.constructor.id);
