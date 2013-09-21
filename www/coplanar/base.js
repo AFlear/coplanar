@@ -19,8 +19,10 @@ function(can) {
     // fire numerous 'set' events, who in turn fire many
     // route events, some with incomplete parameter sets.
     can.route.redirect = function (route, merge) {
-        console.log('==> Redirecting to', can.route.url(route, merge), JSON.stringify(route));
-        var hash = can.route.url(route, merge);
+        if (merge)
+            route = can.extend(can.route.attr(), route);
+        console.log('==> Redirecting to', can.route.url(route), JSON.stringify(route));
+        var hash = can.route.url(route);
         setTimeout(function() {
             window.location.hash = hash;
         }, 10);
@@ -28,8 +30,10 @@ function(can) {
 
     // This replace the route, including its history entry.
     can.route.replace = function (route, merge) {
-        console.log('==> Replacing with', can.route.url(route, merge), JSON.stringify(route));
-        var hash = can.route.url(route, merge);
+        if (merge)
+            route = can.extend(can.route.attr(), route);
+        console.log('==> Replacing with', can.route.url(route), JSON.stringify(route));
+        var hash = can.route.url(route);
         if (hash.substr(0,1) !== '#')
             hash = '#' + hash;
         setTimeout(function() {
