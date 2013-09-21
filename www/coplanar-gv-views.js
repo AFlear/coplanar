@@ -17,6 +17,13 @@ function(coplanar, can) {
          * Generic Controls
          */
         views.GVEditor = coplanar.Control.ModelEditor.extend({
+            defaults: {
+                datePickerOptions: {
+                    firstDay: 4,
+                },
+            },
+        },{
+
             formatDate: function(date) {
                 return jQuery.datepicker.formatDate(
                     this.options.datePickerOptions.dateFormat, date);
@@ -138,7 +145,7 @@ function(coplanar, can) {
                         center: 'title',
                         right:  'today prev next'
                     },
-                    firstDay: 1,
+                    firstDay: 4,
                     allDayDefault: true,
                     editable: false,
                     timeFormat: 'HH:mm',
