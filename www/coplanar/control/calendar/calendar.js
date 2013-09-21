@@ -30,18 +30,19 @@ function(Control, can, jQuery) {
             if (this._calendar == null)
                 this._calendar = this.element;
             this.fullCalendar(can.extend({
-                viewDisplay: function(view) {
+                viewDisplay: can.proxy(function(view) {
                     // We don't want to alter the initial view
                     if (inited === false) {
                         inited = true;
                         return;
                     }
-                    if (can.route.attr('calendarView') === 'month') {
+                    var calendarView = can.route.attr('calendarView') || this.options.defaultCalendarView;
+                    if (calendarView === 'month') {
                         can.route.redirect({
                             year: jQuery.datepicker.formatDate('yy', view.start),
                             month: jQuery.datepicker.formatDate('mm', view.start),
                         }, true);
-                    } else if (can.route.attr('calendarView') === 'week') {
+                    } else if (calendarView === 'week') {
                         var week = jQuery.fullCalendar.formatDate(view.start, 'W');
                         can.route.redirect({
                             // On week 1 we must use the end date for the year.
@@ -49,14 +50,14 @@ function(Control, can, jQuery) {
                                 'yy', parseInt(week) > 1 ? view.start : view.end),
                             week: week,
                         }, true);
-                    } else if (can.route.attr('calendarView') === 'day') {
+                    } else if (calendarView === 'day') {
                         can.route.redirect({
                             year: jQuery.datepicker.formatDate('yy', view.start),
                             month: jQuery.datepicker.formatDate('mm', view.start),
                             day: jQuery.datepicker.formatDate('dd', view.start),
                         }, true);
                     }
-                },
+                }, this),
                 events: can.proxy(this.getEvents, this),
                 eventDataTransform: can.proxy(this.makeCalendarEvent, this),
                 eventClick: can.proxy(this.eventClick, this),
