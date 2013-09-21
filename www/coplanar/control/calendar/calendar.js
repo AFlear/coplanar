@@ -8,6 +8,7 @@ function(Control, can, jQuery) {
             eventsView: 'edit',
             calendarOptions: {},
             defaultCalendarView: 'month',
+            template: null,
         },
 
         weekToDate: function(year, wn, dayNb){
@@ -23,6 +24,9 @@ function(Control, can, jQuery) {
             this._super.apply(this, arguments);
             this.eventsFilter = {};
             var inited = false;
+            if (this.options.template)
+                can.$(can.view(this.options.template, {}, this.templateEnv(), null))
+                    .appendTo(this.element);
             if (this._calendar == null)
                 this._calendar = this.element;
             this.fullCalendar(can.extend({
@@ -63,6 +67,107 @@ function(Control, can, jQuery) {
             this.options.model.bind('updated', can.proxy(this.onModelUpdated, this));
             this.options.model.bind('created', can.proxy(this.onModelUpdated, this));
             this.options.model.bind('destroyed', can.proxy(this.onModelUpdated, this));
+        },
+
+        templateEnv: function() {
+            var self = this;
+            return {
+                setCalendarElement: function(el) {
+                    self._calendar = el;
+                },
+
+                bindRouteAttr: function(el, attr) {
+                    el.val(can.route.attr(attr));
+                    can.route.bind(attr, function(ev, newVal, oldVal) {
+                        el.val(newVal);
+                    });
+                    return el
+                        .change(function (evt) {
+                            var val = el.val();
+                            if (val)
+                                can.route.attr(attr, val);
+                            else
+                                can.route.removeAttr(attr);
+                        });
+                },
+
+                getTitle: function() {
+                    var calendarView = can.route.attr('calendarView') ||
+                        self.options.defaultCalendarView;
+                    if (calendarView === 'month') {
+                        return jQuery.fullCalendar.formatDate(self.routeToDate(), 'MMMM yyyy');
+                    } else if (calendarView === 'week') {
+                        return 'Week ' + can.route.attr('week');
+                    } else if (calendarView === 'day') {
+                        return jQuery.fullCalendar.formatDate(self.routeToDate(), 'dddd, MMM d, yyyy');
+                    }
+                    else
+                        return '';
+                },
+
+                nextPageButton: function(el) {
+                    return el.click(function() {
+                        var route = self.nextPageRoute();
+                        if (route != null)
+                            can.route.redirect(route, true);
+                    });
+                },
+
+                prevPageButton: function(el) {
+                    return el.click(function() {
+                        var route = self.prevPageRoute();
+                        if (route != null)
+                            can.route.redirect(route, true);
+                    });
+                },
+            };
+        },
+
+        dateToRoute: function(date, calendarView) {
+            var route = {
+                calendarView: calendarView,
+                year: jQuery.fullCalendar.formatDate(date, 'yyyy'),
+            };
+
+            if (calendarView === 'week')
+                route.week = jQuery.fullCalendar.formatDate(date, 'W');
+            else {
+                route.month = jQuery.fullCalendar.formatDate(date, 'MM');
+                if (calendarView === 'day')
+                    route.day = jQuery.fullCalendar.formatDate(date, 'dd');
+            }
+
+            return route;
+        },
+
+        nextPageRoute: function() {
+            var calendarView = can.route.attr('calendarView') ||
+                this.options.defaultCalendarView;
+
+            var date = this.routeToDate();
+            if (calendarView === 'month')
+                date = new Date(date.getFullYear(), date.getMonth()+1, 1);
+            else if (calendarView === 'week')
+                date = new Date(date.getFullYear(), date.getMonth(), date.getDate()+7);
+            else if (calendarView === 'day')
+                date = new Date(date.getFullYear(), date.getMonth(), date.getDate()+1);
+
+            return this.dateToRoute(date, calendarView);
+        },
+
+        prevPageRoute: function() {
+            var calendarView = can.route.attr('calendarView') ||
+                this.options.defaultCalendarView;
+
+            var date = this.routeToDate();
+            if (calendarView === 'month')
+                date = new Date(date.getFullYear(), date.getMonth()-1, 1);
+            else if (calendarView === 'week')
+                date = new Date(date.getFullYear(), date.getMonth(), date.getDate()-7);
+            else if (calendarView === 'day')
+                date = new Date(date.getFullYear(), date.getMonth(), date.getDate()-1);
+
+            return this.dateToRoute(date, calendarView);
         },
 
         weekToDate: function(year, wn) {
