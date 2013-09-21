@@ -247,9 +247,11 @@ function(coplanar, can) {
         _routeChangeId: undefined,
 
         '{can.route} change': function (routeObs, evt, attr, newVal, oldVal) {
-            if (evt.batchNum === this._routeChangeId)
-                return;
-            this._routeChangeId = evt.batchNum;
+            if (evt.batchNum != null) {
+                if (evt.batchNum === this._routeChangeId)
+                    return;
+                this._routeChangeId = evt.batchNum;
+            }
             // Our routes have the form: {model}/{view}/{params}
 
             var newRoute = routeObs.attr();
