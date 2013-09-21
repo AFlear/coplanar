@@ -23,7 +23,9 @@ function(Control, can, jQuery) {
             this._super.apply(this, arguments);
             this.eventsFilter = {};
             var inited = false;
-            this.element.fullCalendar(can.extend({
+            if (this._calendar == null)
+                this._calendar = this.element;
+            this.fullCalendar(can.extend({
                 viewDisplay: function(view) {
                     // We don't want to alter the initial view
                     if (inited === false) {
@@ -63,6 +65,19 @@ function(Control, can, jQuery) {
             this.options.model.bind('destroyed', can.proxy(this.onModelUpdated, this));
         },
 
+        weekToDate: function(year, wn) {
+            var firstDay = this.fullCalendar('option', 'firstDay');
+            if (firstDay < 1)
+                firstDay = 6;
+            else
+                firstDay -= 1;
+            return this.constructor.weekToDate(year, wn, firstDay);
+        },
+
+        fullCalendar: function () {
+            return this._calendar.fullCalendar.apply(this._calendar, arguments);
+        },
+
         makeCalendarEvent: function(data) {
             return can.extend({}, data);
         },
@@ -76,7 +91,7 @@ function(Control, can, jQuery) {
             // This only work while the calendar is visible :(
             // To over come this we force a rerender in the show method.
             console.log('onModelUpdated !!!');
-            this.element.fullCalendar('refetchEvents');
+            this.fullCalendar('refetchEvents');
         },
 
         eventClick: function(event, jsEvent, view) {
@@ -97,7 +112,7 @@ function(Control, can, jQuery) {
         show: function() {
             this._super();
             // Make sure the view is up to date with the data
-            this.element.fullCalendar('rerenderEvents');
+            this.fullCalendar('rerenderEvents');
         },
 
         setRoute: function(route) {
@@ -118,9 +133,9 @@ function(Control, can, jQuery) {
                 fcView = 'month';
 
             // Change the view if needed
-            if (this.element.fullCalendar('getView').name !== fcView) {
+            if (this.fullCalendar('getView').name !== fcView) {
                 console.log('Change view');
-                this.element.fullCalendar('changeView', fcView);
+                this.fullCalendar('changeView', fcView);
             }
 
             // Set the date
@@ -128,7 +143,7 @@ function(Control, can, jQuery) {
             var year = route.year ? parseInt(route.year) : today.getFullYear();
             if (calendarView === 'week') {
                 date = route.week ?
-                    Calendar.weekToDate(year, parseInt(route.week), 1) :
+                    this.weekToDate(year, parseInt(route.week)) :
                     today;
             } else {
                 var month = route.month ? parseInt(route.month)-1 : today.getMonth();
@@ -137,7 +152,7 @@ function(Control, can, jQuery) {
             }
 
             console.log('Goto date:', date);
-            this.element.fullCalendar('gotoDate', date);
+            this.fullCalendar('gotoDate', date);
         }
     });
 

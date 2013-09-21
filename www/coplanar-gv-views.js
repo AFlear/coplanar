@@ -178,7 +178,7 @@ function(coplanar, can) {
                     }
                 }
                 if (updateData)
-                    this.element.fullCalendar('refetchEvents');
+                    this.fullCalendar('refetchEvents');
                 this._super(route, updateData);
             },
         });
