@@ -25,7 +25,7 @@ function(can) {
         var hash = can.route.url(route);
         setTimeout(function() {
             window.location.hash = hash;
-        }, 10);
+        }, 100);
     };
 
     // This replace the route, including its history entry.
@@ -38,7 +38,7 @@ function(can) {
             hash = '#' + hash;
         setTimeout(function() {
             window.location.replace(hash);
-        }, 10);
+        }, 100);
     };
 
     return coplanar;
