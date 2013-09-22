@@ -196,7 +196,7 @@ function(Control, can, jQuery) {
         show: function() {
             this._super();
             // Make sure the view is up to date with the data
-            this.fullCalendar('rerenderEvents');
+            this.fullCalendar('render');
         },
 
         routeToDate: function(route, calendarView) {
