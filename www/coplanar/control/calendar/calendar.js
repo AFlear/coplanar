@@ -63,6 +63,7 @@ function(Control, can, jQuery) {
                 eventClick: can.proxy(this.eventClick, this),
                 dayClick: can.proxy(this.dayClick, this),
                 eventAfterRender: can.proxy(this.eventAfterRender, this),
+                eventRender: can.proxy(this.eventRender, this),
                 dayRender: can.proxy(this.dayRender, this)
             }, this.options.calendarOptions));
             this.options.model.bind('updated', can.proxy(this.onModelUpdated, this));
@@ -210,6 +211,9 @@ function(Control, can, jQuery) {
         },
 
         eventAfterRender: function(event, element, view) {
+        },
+
+        eventRender: function(event, element, view) {
         },
 
         dayRender: function( date, cell ) {
