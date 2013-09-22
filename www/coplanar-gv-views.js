@@ -152,7 +152,7 @@ function(coplanar, can) {
                 },
             },
         },{
-            eventAfterRender: function(event, element, view) {
+            eventRender: function(event, element, view) {
                 var status;
                 can.$('<div>', {
                     'class': 'fc-event-location',
