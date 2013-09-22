@@ -208,6 +208,9 @@ function(Control, can, jQuery) {
         },
 
         dayClick: function(date, allDay, jsEvent, view) {
+            var calendarView = can.route.attr('calendarView') || this.options.defaultCalendarView;
+            if (calendarView !== 'day')
+                can.route.redirect(this.dateToRoute(date, 'day'), true);
         },
 
         eventAfterRender: function(event, element, view) {
