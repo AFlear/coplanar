@@ -120,25 +120,6 @@ li:hover > .coplanar-navbar-menu {
     color: black;
  }
 
-.fc-day-actions {
-    display: none;
-    position: relative;
-    height: 100%;
-}
-
-.fc-day-actions a {
-    display: block;
-    position: absolute;
-    bottom: 0px;
-}
-
-.fc-day {
-}
-
-.fc-day:hover .fc-day-actions {
-    display: block;
-}
-
 /** Editor **/
 
 .field-name {
