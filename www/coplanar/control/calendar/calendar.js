@@ -115,6 +115,33 @@ function(Control, can, jQuery) {
             this.fullCalendar('rerenderEvents');
         },
 
+        routeToDate: function(route, calendarView) {
+            if (route == null) {
+                // We use this instead of just can.route.attr() to
+                // properly work with live bindings.
+                route = {
+                    calendarView: can.route.attr('calendarView'),
+                    year: can.route.attr('year'),
+                    month: can.route.attr('month'),
+                    day: can.route.attr('day'),
+                    week: can.route.attr('week'),
+                };
+            }
+            if (calendarView == null)
+                calendarView = route.calendarView || this.options.defaultCalendarView;
+            var today = new Date();
+            var year = route.year ? parseInt(route.year) : today.getFullYear();
+            if (calendarView === 'week') {
+                return route.week ?
+                    this.weekToDate(year, parseInt(route.week)) :
+                    today;
+            } else {
+                var month = route.month ? parseInt(route.month)-1 : today.getMonth();
+                var day = route.day ? parseInt(route.day) : today.getDate();
+                return new Date(year, month, day);
+            }
+        },
+
         setRoute: function(route) {
             // Normalize the view name
             var calendarView = route.calendarView || this.options.defaultCalendarView;
@@ -139,17 +166,7 @@ function(Control, can, jQuery) {
             }
 
             // Set the date
-            var date, today = new Date();
-            var year = route.year ? parseInt(route.year) : today.getFullYear();
-            if (calendarView === 'week') {
-                date = route.week ?
-                    this.weekToDate(year, parseInt(route.week)) :
-                    today;
-            } else {
-                var month = route.month ? parseInt(route.month)-1 : today.getMonth();
-                var day = route.day ? parseInt(route.day) : today.getDate();
-                date = new Date(year, month, day);
-            }
+            var date = this.routeToDate(route, calendarView);
 
             console.log('Goto date:', date);
             this.fullCalendar('gotoDate', date);
