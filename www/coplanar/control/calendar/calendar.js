@@ -23,41 +23,12 @@ function(Control, can, jQuery) {
         init: function () {
             this._super.apply(this, arguments);
             this.eventsFilter = {};
-            var inited = false;
             if (this.options.template)
                 can.$(can.view(this.options.template, {}, this.templateEnv(), null))
                     .appendTo(this.element);
             if (this._calendar == null)
                 this._calendar = this.element;
             this.fullCalendar(can.extend({
-                viewDisplay: can.proxy(function(view) {
-                    // We don't want to alter the initial view
-                    if (inited === false) {
-                        inited = true;
-                        return;
-                    }
-                    var calendarView = can.route.attr('calendarView') || this.options.defaultCalendarView;
-                    if (calendarView === 'month') {
-                        can.route.redirect({
-                            year: jQuery.datepicker.formatDate('yy', view.start),
-                            month: jQuery.datepicker.formatDate('mm', view.start),
-                        }, true);
-                    } else if (calendarView === 'week') {
-                        var week = jQuery.fullCalendar.formatDate(view.start, 'W');
-                        can.route.redirect({
-                            // On week 1 we must use the end date for the year.
-                            year: jQuery.datepicker.formatDate(
-                                'yy', parseInt(week) > 1 ? view.start : view.end),
-                            week: week,
-                        }, true);
-                    } else if (calendarView === 'day') {
-                        can.route.redirect({
-                            year: jQuery.datepicker.formatDate('yy', view.start),
-                            month: jQuery.datepicker.formatDate('mm', view.start),
-                            day: jQuery.datepicker.formatDate('dd', view.start),
-                        }, true);
-                    }
-                }, this),
                 events: can.proxy(this.getEvents, this),
                 eventDataTransform: can.proxy(this.makeCalendarEvent, this),
                 eventClick: can.proxy(this.eventClick, this),
@@ -256,12 +227,37 @@ function(Control, can, jQuery) {
         },
 
         setRoute: function(route) {
+            var routeAdd = {};
+
             // Normalize the view name
             var calendarView = route.calendarView || this.options.defaultCalendarView;
             if (calendarView !== 'month' &&
                 calendarView !== 'week' &&
                 calendarView !== 'day')
                 calendarView = 'month';
+
+            if (calendarView !== route.calendarView)
+                routeAdd.calendarView = calendarView;
+
+            // Normalize the date
+            var today = new Date();
+            if (route.year == null)
+                routeAdd.year = jQuery.fullCalendar.formatDate(today, 'yyyy');
+            if (calendarView === 'week') {
+                if (route.week == null)
+                    routeAdd.week = jQuery.fullCalendar.formatDate(today, 'W');
+            } else {
+                if (route.month == null)
+                    routeAdd.month = jQuery.fullCalendar.formatDate(today, 'MM');
+                if (calendarView === 'day' && route.day == null)
+                    routeAdd.day = jQuery.fullCalendar.formatDate(today, 'dd');
+            }
+
+            // If the route used some default replace it with the full one
+            if (!can.isEmptyObject(routeAdd)) {
+                can.route.replace(routeAdd, true);
+                return;
+            }
 
             // Map to fullcalendar names
             var fcView;
