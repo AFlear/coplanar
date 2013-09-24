@@ -1,0 +1,53 @@
+<div class="coplanar-fc-filters">
+  <span
+     <%= (el) -> el.button() %>
+    >
+    <span class="ui-icon ui-icon-gear">v</span>
+  </span>
+  <div class="coplanar-fc-filters-frame ui-widget ui-widget-content ui-state-default ui-corner-all">
+    <label>Location</label>
+    <select
+       class="coplanar-fc-filter"
+       <%= (el) -> bindRouteAttr(el, 'location') %>>
+      <option value="">All</option>
+      <option value="Druckerei">Druckerei</option>
+      <option value="Fabrik Links">Fabrik Links</option>
+      <option value="Fabrik Rechts">Fabrik Rechts</option>
+      <option value="Jupi">Jupi</option>
+    </select>
+    <label>Event type</label>
+    <select
+       class="coplanar-fc-filter"
+       <%= (el) -> bindRouteAttr(el, 'eventType') %>>
+      <option value="">All</option>
+      <option value="Concert">Concert</option>
+      <option value="Party">Party</option>
+      <option value="Movie">Movie</option>
+    </select>
+    <label>Status</label>
+    <select
+       class="coplanar-fc-filter"
+       <%= (el) -> bindRouteAttr(el, 'state') %>>
+      <option value="">All</option>
+      <option value="unconfirmed">TBC</option>
+      <option value="confirmed">Confirmed</option>
+      <option value="canceled">Canceled</option>
+    </select>
+  </div>
+</div>
+<h2 style="text-align: center;"><%= getTitle() %></h2>
+<div class="coplanar-fc-frame">
+  <div
+     class="coplanar-fc-prev-button coplanar-fc-nav-button"
+     <%= (el) -> el.button() %>
+     <%= (el) -> prevPageButton(el) %>
+    >&lt;</div>
+  <div
+    <%= (el) -> setCalendarElement(el) %>
+    />
+  <div
+     class="coplanar-fc-next-button coplanar-fc-nav-button"
+     <%= (el) -> el.button() %>
+     <%= (el) -> nextPageButton(el) %>
+    >&gt;</div>
+</div>

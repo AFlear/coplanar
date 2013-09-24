@@ -6,6 +6,7 @@ steal("coplanar", "can",
       'ui/hostel-editor.ejs',
       'ui/event-editor.ejs',
       'ui/hostel-editor.ejs',
+      'ui/event-calendar.ejs',
 function(coplanar, can) {
     /*
      * This module provide a constructor function that create the
@@ -136,38 +137,35 @@ function(coplanar, can) {
 
         views.EventCreator = views.EventEditor.Creator();
 
-        views.EventCalendar = coplanar.Control.Calendar.extend({
+        views.GVCalendar = coplanar.Control.Calendar.extend({
             defaults: {
-                model: models.Event,
                 calendarOptions: {
-                    header: {
-                        left:   '',
-                        center: 'title',
-                        right:  'today prev next'
-                    },
                     firstDay: 4,
+                    weekNumbers: true,
+                    weekMode: 'variable',
                     allDayDefault: true,
                     editable: false,
                     timeFormat: 'HH:mm',
                 },
             },
         },{
+        });
+
+        views.PlannableCalendar = views.GVCalendar.extend({
+        },{
             eventRender: function(event, element, view) {
-                var status;
-                can.$('<div>', {
-                    'class': 'fc-event-location',
-                    text: event.location,
-                }).prependTo(element);
-                if (event.state == 'unconfirmed')
-                    status = 'TBC';
-                else if (event.state == 'canceled')
-                    status = 'CANCELED';
-                if (status)
-                    can.$('<span>', {
-                        text: status,
-                        'class': 'fc-event-status',
-                        // fc-event-status-' + event.state,
-                    }).appendTo(can.$('.fc-event-inner', element));
+                if (can.route.attr('state') == null) {
+                    var status;
+                    if (event.state == 'unconfirmed')
+                        status = 'TBC';
+                    else if (event.state == 'canceled')
+                        status = 'CANCELED';
+                    if (status)
+                        can.$('<span>', {
+                            text: status,
+                            'class': 'fc-event-status',
+                        }).appendTo(can.$('.fc-event-inner', element));
+                }
                 element.addClass('fc-event-' + event.state);
             },
 
@@ -190,7 +188,32 @@ function(coplanar, can) {
             },
         });
 
-        views.HostelCalendar = views.EventCalendar.extend({
+        views.EventCalendar = views.PlannableCalendar.extend({
+            defaults: {
+                model: models.Event,
+                template: 'ui/event-calendar.ejs',
+            },
+        },{
+            eventRender: function(event, element, view) {
+                if (can.route.attr('eventType') == null) {
+                    can.$('<span>', {
+                        text: event.eventType,
+                        'class': 'fc-event-type',
+                    }).prependTo(can.$('.fc-event-inner', element));
+                }
+                //element.addClass('fc-event-' + event.eventType);
+                if (can.route.attr('location') == null && event.location) {
+                    can.$('<div>', {
+                        text: event.location,
+                        'class': 'fc-event-location',
+                    }).prependTo(can.$('.fc-event-inner', element));
+                }
+                //element.addClass('fc-event-' + event.location);
+                this._super.apply(this, arguments);
+            },
+        });
+
+        views.HostelCalendar = views.PlannableCalendar.extend({
             makeCalendarEvent: function(data) {
                 var title = data.personCount > 1 ? (data.personCount + ' persons') : '1 person';
                 return can.extend({title: title}, data);
