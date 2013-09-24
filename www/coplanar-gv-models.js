@@ -32,6 +32,17 @@ function(coplanar, can) {
                 this.validatePresenceOf("docType");
             },
         },{
+            save: function() {
+                if (this.isNew()) {
+                    if (this.attr('creator') == null)
+                        this.attr('creator', session.username);
+                    if (this.attr('creationDate') == null)
+                        this.attr('creationDate',
+                                  jQuery.fullCalendar.formatDate(
+                                      new Date(), 'yyyy/MM/dd HH:mm:ss'));
+                }
+                return this._super.apply(this, arguments);
+            },
         });
 
         models.PlannableModel = models.GVModel.extend({
