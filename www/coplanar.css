@@ -118,7 +118,58 @@ li:hover > .coplanar-navbar-menu {
 
 .fc-event-location {
     color: black;
+    text-align: center;
  }
+
+.fc-event-type {
+    color: blue;
+ }
+
+.fc-event-type:after {
+    content: ": ";
+}
+
+.coplanar-fc-filters {
+    float: right;
+    position: relative;
+    display: inline-block;
+}
+
+.coplanar-fc-filters-frame {
+    position: absolute;
+    display: none;
+    padding: 0.5ex;
+    z-index: 90;
+    right: 0px;
+}
+
+.coplanar-fc-filters:hover > .coplanar-fc-filters-frame {
+    display: block;
+}
+
+.coplanar-fc-frame {
+    position: relative;
+}
+
+.coplanar-fc-frame > .fc {
+    margin: 0em 3.5em;
+}
+
+.coplanar-fc-nav-button {
+    position: absolute;
+    text-align: center;
+    width: 2.5em;
+    top: 0px;
+    height: 100%;
+}
+
+.coplanar-fc-next-button {
+    right: 0px;
+}
+
+.coplanar-fc-prev-button {
+    left: 0px;
+}
 
 /** Editor **/
 

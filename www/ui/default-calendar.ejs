@@ -1,0 +1,16 @@
+<h2 style="text-align: center;"><%= getTitle() %></h2>
+<div class="coplanar-fc-frame">
+  <div
+     class="coplanar-fc-prev-button coplanar-fc-nav-button"
+     <%= (el) -> el.button() %>
+     <%= (el) -> prevPageButton(el) %>
+    >&lt;</div>
+  <div
+     <%= (el) -> setCalendarElement(el) %>
+    />
+  <div
+     class="coplanar-fc-next-button coplanar-fc-nav-button"
+     <%= (el) -> el.button() %>
+     <%= (el) -> nextPageButton(el) %>
+    >&gt;</div>
+</div>

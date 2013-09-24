@@ -1,14 +1,21 @@
 steal('coplanar/control', 'can', 'jquery',
       'jquery-ui', 'fullcalendar',
+      'ui/default-calendar.ejs',
 function(Control, can, jQuery) {
 
     Control.Calendar = Control.extend({
         defaults: {
             model: null,
             eventsView: 'edit',
-            calendarOptions: {},
+            calendarOptions: {
+                header: {
+                    left:   '',
+                    center: '',
+                    right:  ''
+                },
+            },
             defaultCalendarView: 'month',
-            template: null,
+            template: 'ui/default-calendar.ejs',
         },
 
         weekToDate: function(year, wn, dayNb){
