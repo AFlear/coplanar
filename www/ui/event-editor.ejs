@@ -38,14 +38,16 @@
       <div>
         <input class="scalar-field-value"
                <%= (el) -> bindValue(datePicker(el), 'start') %>/>
-        <span class="scalar-field-editor" style="<%= this['end'] ? '' : 'display: none;' %>">
+        <span class="scalar-field-editor" style="<%= !data.end ? 'display: none;' : '' %>">
           to
           <input class="field-value"
-                 <%= (el) -> bindValue(datePicker(el), 'end') %>/>
+                 <%= (el) -> bindValue(datePicker(el), 'end') %>
+                 <%= (el) -> if (data.start) el.datepicker('option', 'minDate', (new Date(data.start)).nextDay()) %> />
         </span>
       </div>
       <div>
-        <input class="field-value" type="checkbox" name="_withEnd">
+        <input class="field-value" type="checkbox" name="_withEnd"
+               <%= (el) ->  el.prop('checked', !!data.attr('end')) %> >
           Last more than one day
         </input>
       </div>

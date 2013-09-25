@@ -35,10 +35,10 @@ function(coplanar, can) {
                 if (el[0].checked) {
                     var start = can.$('input[name="start"]',
                                       el.parent().parent());
-                    if (start[0].value != '') {
-                        var date = new Date(start[0].value);
-                        date.setDate(date.getDate()+1);
-                        end[0].value = this.formatDate(date);
+                    if (start.val() != '') {
+                        var date = new Date(start.val()).nextDay();
+                        end.datepicker('option', 'minDate', this.formatDate(date));
+                        end.val(this.formatDate(date)).change();
                     }
                     end.parent().show();
                 } else {
@@ -48,8 +48,7 @@ function(coplanar, can) {
             },
 
             'input[name="start"] change': function(el, evt) {
-                var date = new Date(el[0].value);
-                date.setDate(date.getDate()+1);
+                var date = new Date(el.val()).nextDay();
                 can.$('input[name="end"]', el.parent())
                     .datepicker('option', 'minDate', this.formatDate(date));
             },
