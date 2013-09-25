@@ -13,6 +13,20 @@ function(can) {
     if (window.console.log == null)
         window.console.log = function () {};
 
+    Date.prototype.addDay = function(n) {
+        return new Date(this.getFullYear(),
+                        this.getMonth(),
+                        this.getDate()+n);
+    }
+
+    Date.prototype.nextDay = function() {
+        return this.addDay(1);
+    }
+
+    Date.prototype.prevDay = function() {
+        return this.addDay(-1);
+    }
+
     // Redirect the browser to another route.
     // This function allow to set the whole route 'at once'.
     // This is in contrast to using can.route.attr() that
