@@ -3,6 +3,7 @@ steal('coplanar/control', 'can',
 function(Control, can) {
     Control.ListEditor = Control.ObjectView.extend({
         defaults: {
+            ObjectEditor: Control.ObjectEditor,
             objectTemplate: null,
             objectFactory: null,
             defaultObject: null,
@@ -59,14 +60,14 @@ function(Control, can) {
 
         makeObjectEditor: function(el, obj, idx) {
             obj.backup();
-            return new Control.ObjectEditor(el, {
+            return new this.options.ObjectEditor(el, {
                 template: this.options.objectTemplate,
                 object: obj,
             });
         },
 
         makeObjectCreator: function(el) {
-            return new Control.ObjectEditor(el, {
+            return new this.options.ObjectEditor(el, {
                 template: this.options.objectTemplate,
                 object:   this._addObject,
             });
