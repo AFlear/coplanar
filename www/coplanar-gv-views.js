@@ -7,6 +7,7 @@ steal("coplanar", "can",
       'ui/event-editor.ejs',
       'ui/hostel-editor.ejs',
       'ui/event-calendar.ejs',
+      'ui/list-item-editor.ejs',
 function(coplanar, can) {
     /*
      * This module provide a constructor function that create the
@@ -76,7 +77,22 @@ function(coplanar, can) {
         /*
          * Event controls
          */
-        views.EventProgramListEditor = coplanar.Control.ListEditor.extend({
+        views.ListEditorItem = views.GVEditor.extend({
+            defaults: {
+                editorTemplate: 'ui/list-item-editor.ejs',
+            },
+        },{
+        })
+
+        views.ListEditor = coplanar.Control.ListEditor.extend({
+            defaults: {
+                editorTemplate: 'ui/model-editor.ejs',
+                ObjectEditor: views.ListEditorItem,
+            },
+        },{
+        });
+
+        views.EventProgramListEditor = views.ListEditor.extend({
             defaults: {
                 template: 'ui/list-editor-accordion.ejs',
                 objectTemplate: 'ui/event-program-editor.ejs',
@@ -96,7 +112,7 @@ function(coplanar, can) {
             },
         });
 
-        views.EventHostelListEditor = coplanar.Control.ListEditor.extend({
+        views.EventHostelListEditor = views.ListEditor.extend({
             defaults: {
                 template: 'ui/list-editor-accordion.ejs',
                 objectTemplate: 'ui/hostel-editor.ejs',
