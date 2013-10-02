@@ -15,6 +15,15 @@ function(coplanar, can) {
      */
     return function (models, session) {
         var views = {};
+
+        function extendWithGlobalEnv(env) {
+            return can.extend(env || {}, {
+                session: function() {
+                    return session;
+                },
+            });
+        }
+
         /*
          * Generic Controls
          */
@@ -55,12 +64,7 @@ function(coplanar, can) {
             },
 
             newEnv: function() {
-                var self = this;
-                return can.$.extend(this._super(), {
-                    "session": function() {
-                        return session;
-                    },
-                });
+                return extendWithGlobalEnv(this._super());
             },
         });
 
@@ -164,6 +168,9 @@ function(coplanar, can) {
                 },
             },
         },{
+            templateEnv: function() {
+                return extendWithGlobalEnv(this._super());
+            },
         });
 
         views.PlannableCalendar = views.GVCalendar.extend({
