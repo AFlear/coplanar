@@ -1,5 +1,6 @@
 steal('coplanar/base.js', 'can',
       'can/observe/validations',
+      'can/model/queue',
 function(coplanar, can) {
     var refRe = new RegExp('^(ref[^:]*):(.+)$');
 
