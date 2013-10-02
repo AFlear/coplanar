@@ -77,7 +77,9 @@ function(Control, can) {
                     el.tooltip();
 
                     // Init to the object value
-                    setElementVal();
+                    setTimeout(function () {
+                        setElementVal();
+                    }, 10);
                     // Bind to the data object reload event, this allow
                     // code that only have the data model signal the editor.
                     can.bind.call(data, 'reload-data', function() {
