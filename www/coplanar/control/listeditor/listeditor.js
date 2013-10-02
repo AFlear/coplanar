@@ -92,7 +92,6 @@ function(Control, can) {
         },
 
         objectAddButton: function(el) {
-            console.log(this);
             this._addButtons.push(el);
             return el.click(can.proxy(this.onObjectAddButtonClick, this));
         },
