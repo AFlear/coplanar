@@ -9,7 +9,7 @@ function(coplanar, can) {
      * Beside a few helpers this class add support for reference.
      */
     coplanar.Model = can.Model.extend({
-        convert: can.extend(can.extend({}, can.Model.convert), {
+        convert: {
             "default": function( val, oldVal, error, type ) {
                 if (type.substr(0,4) == 'ref:')
                     return this.convertRef(this, val);
@@ -18,9 +18,9 @@ function(coplanar, can) {
                 else
                     return can.Model.convert['default'].apply(this, arguments);
             },
-        }),
+        },
 
-        serialize: can.extend(can.extend({}, can.Model.serialize), {
+        serialize: {
             "default": function( val, type ) {
                 if (type.substr(0,4) == 'ref:')
                     return this.serializeRef(val);
@@ -29,7 +29,7 @@ function(coplanar, can) {
                 else
                     return can.Model.serialize['default'].apply(this, arguments);
             },
-        }),
+        },
 
         // Return a default object for the controls. We don't override model()
         // because it must still be possible to construct empty objects for
