@@ -1,9 +1,17 @@
 steal('coplanar/control', 'can',
       'coplanar/control/objectview', 'coplanar/control/objecteditor',
 function(Control, can) {
+
+    Control.ListEditorItem = Control.ObjectEditor.extend({
+        open: function(obj) {
+            obj.backup();
+            return this._super.apply(this, arguments);
+        },
+    });
+
     Control.ListEditor = Control.ObjectView.extend({
         defaults: {
-            ObjectEditor: Control.ObjectEditor,
+            ObjectEditor: Control.ListEditorItem,
             objectTemplate: null,
             objectFactory: null,
             defaultObject: null,
@@ -24,7 +32,6 @@ function(Control, can) {
         open: function(obj) {
             if (this._addObject == null) {
                 this._addObject = this.createObject();
-                this._addObject.backup(); // Backup the empty object
                 this._addObject.bind("change", can.proxy(this.onAddObjectChange, this));
             }
             this._super(obj);
@@ -59,7 +66,6 @@ function(Control, can) {
         },
 
         makeObjectEditor: function(el, obj, idx) {
-            obj.backup();
             return new this.options.ObjectEditor(el, {
                 template: this.options.objectTemplate,
                 object: obj,
