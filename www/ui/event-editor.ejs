@@ -12,20 +12,14 @@
       <div class="field-name">Status</div>
       <select class="field-value"
               <%= (el) -> bindValue(el, 'state') %>>
-        <option value="unconfirmed">Unconfirmed</option><!-- Unbestätigt -->
-        <% if (session().isAdmin()) { %>
-          <option value="confirmed">Confirmed</option>    <!-- Bestätigt -->
-        <% } %>
-        <option value="canceled">Canceled</option>      <!-- Annulliert -->
+              <%== makeTypeChoices('state', true) %>
       </select>
     </div>
     <div>
       <div class="field-name">Type</div>
       <select class="field-value"
               <%= (el) -> bindValue(el, 'eventType') %>>
-        <option value="Concert">Concert</option>
-        <option value="Party">Party</option>
-        <option value="Movie">Movie</option>
+              <%== makeTypeChoices('eventType', true) %>
       </select>
     </div>
     <div>
@@ -56,11 +50,7 @@
       <div class="field-name">Location</div>
       <select class="field-value"
               <%= (el) -> bindValue(el, 'location') %>>
-        <option value="">Select one…</option>
-        <option value="Druckerei">Druckerei</option>
-        <option value="Fabrik Links">Fabrik Links</option>
-        <option value="Fabrik Rechts">Fabrik Rechts</option>
-        <option value="Jupi">Jupi</option>
+              <%== makeTypeChoices('location', true) %>
       </select>
     </div>
   </div>

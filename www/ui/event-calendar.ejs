@@ -10,28 +10,21 @@
        class="coplanar-fc-filter"
        <%= (el) -> bindRouteAttr(el, 'location') %>>
       <option value="">All</option>
-      <option value="Druckerei">Druckerei</option>
-      <option value="Fabrik Links">Fabrik Links</option>
-      <option value="Fabrik Rechts">Fabrik Rechts</option>
-      <option value="Jupi">Jupi</option>
+      <%== makeTypeChoices('location') %>
     </select>
     <label>Event type</label>
     <select
        class="coplanar-fc-filter"
        <%= (el) -> bindRouteAttr(el, 'eventType') %>>
       <option value="">All</option>
-      <option value="Concert">Concert</option>
-      <option value="Party">Party</option>
-      <option value="Movie">Movie</option>
+      <%== makeTypeChoices('eventType') %>
     </select>
     <label>Status</label>
     <select
        class="coplanar-fc-filter"
        <%= (el) -> bindRouteAttr(el, 'state') %>>
       <option value="">All</option>
-      <option value="unconfirmed">TBC</option>
-      <option value="confirmed">Confirmed</option>
-      <option value="canceled">Canceled</option>
+      <%== makeTypeChoices('state') %>
     </select>
   </div>
 </div>

@@ -2,9 +2,7 @@
   <div class="field-name">Status</div>
   <select class="field-value"
           <%= (el) -> bindValue(el, 'state') %>>
-    <option value="unconfirmed">Unconfirmed</option><!-- Unbestätigt -->
-    <option value="confirmed">Confirmed</option>    <!-- Bestätigt -->
-    <option value="canceled">Canceled</option>      <!-- Annulliert -->
+          <%== makeTypeChoices('state', true) %>
   </select>
 </div>
 <div>

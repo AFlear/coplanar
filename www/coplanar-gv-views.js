@@ -16,10 +16,67 @@ function(coplanar, can) {
     return function (models, session) {
         var views = {};
 
+        var dataTypes = {
+            state: [
+                {
+                    name: "TBC",
+                    value: "unconfirmed",
+                },
+                {
+                    name: "Confirmed",
+                    value: "confirmed",
+                    canSet: function(obj) {
+                        return session.isAdmin();
+                    },
+                },
+                {
+                    name: "Canceled",
+                    value: "canceled",
+                },
+            ],
+            location: [
+                "Brache",
+                "Druckerei",
+                "Fabrik Links",
+                "Fabrik Rechts",
+                "Fabrik Keller",
+                "Jupi",
+                "Loge",
+                "Kaschemme",
+                "Kindergarten",
+                "Links Rechts",
+                "Teestübe",
+                "Puppenstube",
+            ],
+            eventType: [
+                "Ausstellung",
+                "Filmabend",
+                "Konzert",
+                "Lesung",
+                "Party",
+            ],
+        };
+
         function extendWithGlobalEnv(env) {
             return can.extend(env || {}, {
                 session: function() {
                     return session;
+                },
+                makeTypeChoices: function(type, set) {
+                    var html = '';
+                    if (typeof type === 'string')
+                        type = dataTypes[type];
+                    can.each(type, can.proxy(function(t, i) {
+                        if (typeof t !== 'object')
+                            t = { value: '' + t };
+                        if (t.value == null)
+                            return;
+                        if (set && t.canSet != null && !t.canSet(this.getData && this.getData()))
+                            return;
+                        html += '<option value="' + can.esc(t.value) + '">' +
+                            can.esc(t.name || t.value) + '</option>';
+                    }, this));
+                    return html;
                 },
             });
         }
