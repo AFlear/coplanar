@@ -24,7 +24,7 @@ function(coplanar, can) {
             "default": function( val, type ) {
                 if (type.substr(0,4) == 'ref:')
                     return this.serializeRef(val);
-                else if (type.substr(0,4) == 'refList:')
+                else if (type.substr(0,8) == 'refList:')
                     return this.serializeRefList(val);
                 else
                     return can.Model.serialize['default'].apply(this, arguments);
