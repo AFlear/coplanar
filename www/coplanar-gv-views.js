@@ -85,14 +85,17 @@ function(coplanar, can) {
                             t = { value: '' + t };
                         if (t.value == null)
                             return;
+                        var data = this.getData && this.getData();
+                        var oldValue = data && data.backupAttr(type);
+                        var currentValue = data && data.attr(type);
                         if (set && t.canSet != null) {
-                            var data = this.getData();
-                            if (((data && data.backupAttr(type)) != t.value) &&
-                                !t.canSet(data))
+                            if (oldValue != t.value && !t.canSet(data))
                                 return;
                         }
-                        html += '<option value="' + can.esc(t.value) + '">' +
-                            can.esc(t.name || t.value) + '</option>';
+                        html += '<option value="' + can.esc(t.value) + '"';
+                        if (t.value == currentValue)
+                            html += ' selected="selected"';
+                        html += '>' + can.esc(t.name || t.value) + '</option>';
                     }, this));
                     return html;
                 },
