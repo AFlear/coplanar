@@ -62,9 +62,11 @@ function(coplanar, can) {
                 this.validate(
                     "state",
                     function(value) {
+                        var oldValue = this.backupAttr('state');
+                        if (value == oldValue)
+                            return;
                         if (value == 'unconfirmed') {
-                            if (this.state != null && this.state != 'unconfirmed')
-                                return 'Forbiden state';
+                            return 'Forbiden state';
                         } else if (value == 'confirmed') {
                             if (!session.isAdmin())
                                 return 'Only admins can confirm';
