@@ -66,7 +66,8 @@ function(coplanar, can) {
                         if (value == oldValue)
                             return;
                         if (value == 'unconfirmed') {
-                            return 'Forbiden state';
+                            if (!this.isModelAdmin())
+                                return 'Only site admins can unconfirm';
                         } else if (value == 'confirmed') {
                             if (!this.isModelAdmin())
                                 return 'Only admins can confirm';
