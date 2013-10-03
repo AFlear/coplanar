@@ -68,10 +68,10 @@ function(coplanar, can) {
                         if (value == 'unconfirmed') {
                             return 'Forbiden state';
                         } else if (value == 'confirmed') {
-                            if (!session.isAdmin())
+                            if (!this.isModelAdmin())
                                 return 'Only admins can confirm';
                         } else if (value == 'canceled') {
-                            if (!session.isAdmin() && this.state == 'confirmed')
+                            if (!this.isModelAdmin() && this.state == 'confirmed')
                                 return 'Only admins can cancel';
                         } else
                             return 'Invalid state';
@@ -83,6 +83,9 @@ function(coplanar, can) {
                 }, data));
             },
         },{
+            isModelAdmin: function() {
+                return session.isAdmin();
+            },
         });
 
         models.Hostel = models.PlannableModel.extend({
