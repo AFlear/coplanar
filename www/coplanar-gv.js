@@ -132,9 +132,24 @@ function (jQuery, can, coplanar, config,
     });
 
     CoplanarGV.Session = coplanar.App.Session.extend({
+        hasRole: function() {
+            var roles = this.attr('roles');
+            if (roles == null || roles.indexOf == null)
+                return false;
+            for (var i in arguments)
+                if (roles.indexOf(arguments[i]) >= 0)
+                    return true;
+            return false;
+        },
+
+        isLocationAdmin: function(room) {
+            if (this.isAdmin())
+                return true;
+            return room ? this.hasRole('' + room + ' Admin') : false;
+        },
+
         isAdmin: function() {
-            return this.roles != null && this.roles.indexOf != null &&
-                this.roles.indexOf('_admin') !== -1;
+            return this.hasRole('_admin', 'Coplanar Admin');
         },
     });
 
