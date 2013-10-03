@@ -126,6 +126,18 @@ function(coplanar, can) {
                 this._super.apply(this, arguments);
                 this.validatePresenceOf("eventType");
                 this.validatePresenceOf("title");
+                this.validate(
+                    "location",
+                    function(value) {
+                        var oldValue = this.backupAttr('location');
+                        if (value == oldValue)
+                            return;
+                        if (this.state == 'unconfirmed')
+                            return;
+                        if (session.isLocationAdmin(value))
+                            return;
+                        return 'Only admins can change the location';
+                    });
             },
             getDefaultObject: function (data) {
                 return this._super(can.extend({
@@ -134,6 +146,9 @@ function(coplanar, can) {
                 }, data));
             },
         },{
+            isModelAdmin: function() {
+                return session.isLocationAdmin(this.attr('location'));
+            },
         });
 
         var UserDb = db.UserDb();
