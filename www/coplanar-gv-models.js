@@ -71,7 +71,7 @@ function(coplanar, can) {
                             if (!this.isModelAdmin())
                                 return 'Only admins can confirm';
                         } else if (value == 'canceled') {
-                            if (!this.isModelAdmin() && this.state == 'confirmed')
+                            if (!this.isModelAdmin())
                                 return 'Only admins can cancel';
                         } else
                             return 'Invalid state';
