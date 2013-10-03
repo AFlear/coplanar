@@ -43,6 +43,12 @@ function(coplanar, can) {
                 }
                 return this._super.apply(this, arguments);
             },
+
+            backupAttr: function(attr) {
+                return attr ?
+                    (this._backupStore && this._backupStore[attr]) :
+                    this._backupStore;
+            },
         });
 
         models.PlannableModel = models.GVModel.extend({
