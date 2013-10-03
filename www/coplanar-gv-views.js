@@ -16,22 +16,26 @@ function(coplanar, can) {
     return function (models, session) {
         var views = {};
 
+        function locationAdminCanSet(obj) {
+            return session.isLocationAdmin(obj.attr('location'));
+        }
+
         var dataTypes = {
             state: [
                 {
                     name: "TBC",
                     value: "unconfirmed",
+                    canSet: locationAdminCanSet,
                 },
                 {
                     name: "Confirmed",
                     value: "confirmed",
-                    canSet: function(obj) {
-                        return session.isAdmin();
-                    },
+                    canSet: locationAdminCanSet,
                 },
                 {
                     name: "Canceled",
                     value: "canceled",
+                    canSet: locationAdminCanSet,
                 },
             ],
             location: [
@@ -56,6 +60,18 @@ function(coplanar, can) {
                 "Party",
             ],
         };
+
+        var newLocs = [];
+        can.each(dataTypes.location, function(loc) {
+            newLocs.push({
+                value: loc,
+                canSet: function(obj) {
+                    return obj.backupAttr('state') == 'unconfirmed' ||
+                        session.isLocationAdmin(loc);
+                },
+            });
+        });
+        dataTypes.location = newLocs;
 
         function extendWithGlobalEnv(env) {
             return can.extend(env || {}, {
