@@ -64,15 +64,17 @@ function(coplanar, can) {
                 },
                 makeTypeChoices: function(type, set) {
                     var html = '';
-                    if (typeof type === 'string')
-                        type = dataTypes[type];
-                    can.each(type, can.proxy(function(t, i) {
+                    can.each(dataTypes[type], can.proxy(function(t, i) {
                         if (typeof t !== 'object')
                             t = { value: '' + t };
                         if (t.value == null)
                             return;
-                        if (set && t.canSet != null && !t.canSet(this.getData && this.getData()))
-                            return;
+                        if (set && t.canSet != null) {
+                            var data = this.getData();
+                            if (((data && data.backupAttr(type)) != t.value) &&
+                                !t.canSet(data))
+                                return;
+                        }
                         html += '<option value="' + can.esc(t.value) + '">' +
                             can.esc(t.name || t.value) + '</option>';
                     }, this));
