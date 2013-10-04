@@ -121,7 +121,14 @@ function(coplanar, can) {
             docType: 'Event',
             attributes: {
                 'hostel': 'refList:Hostel',
-                'program': 'EventProgram.models',
+                'program': 'EventProgramList',
+            },
+            convert: {
+                EventProgramList: function(raw) {
+                    if (raw instanceof models.EventProgram.List)
+                        return raw;
+                    return models.EventProgram.models(raw);
+                },
             },
             init: function() {
                 this._super.apply(this, arguments);
